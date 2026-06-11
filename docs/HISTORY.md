@@ -369,3 +369,12 @@
 **Próximo:**
 - Deploy Vercel para produção servir `.cmd`
 
+---
+
+## 2026-06-11 — Commit + deploy produção
+
+**Feito:**
+- Commit `aff01e7`: launcher `.cmd`, toggle Add/Remover, fix encoding
+- Push `main` → GitHub (email noreply no committer)
+- Vercel production **Ready** (~42s) — https://easywinget.vercel.app
+

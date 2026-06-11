@@ -1,0 +1,5 @@
+/winget-pkgs
+packages-export.json
+scripts/extracted.ps1
+node_modules
+scripts/sync-winget/node_modules
