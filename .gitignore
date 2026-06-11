@@ -37,6 +37,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# winget-pkgs clone (sync local / CI)
+/winget-pkgs/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.vercel

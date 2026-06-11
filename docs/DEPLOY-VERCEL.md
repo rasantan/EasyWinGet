@@ -131,6 +131,14 @@ Confirme que o login anônimo está ativo:
 
 Sem isso, o middleware falha ao criar sessão na primeira visita e rotas que exigem usuário (favoritos, bundles, geração de script) retornam erro.
 
+### CAPTCHA (causa comum de 401)
+
+Se **Enable CAPTCHA protection** estiver ativo no Supabase, `signInAnonymously()` falha com `captcha protection: request disallowed` e o download do `.ps1` retorna **Unauthorized**.
+
+**Opção A (recomendada para MVP):** Authentication → **Bot and Abuse Protection** → desative **Enable CAPTCHA protection**.
+
+**Opção B:** Configure Cloudflare Turnstile e defina `NEXT_PUBLIC_TURNSTILE_SITE_KEY` na Vercel (o app envia o token via `/api/auth/bootstrap`).
+
 ---
 
 ## 8. Checklist pós-deploy
@@ -181,4 +189,4 @@ Se o projeto Supabase estiver em outra região (ex.: `us-east-1`), você pode tr
 | Build falha por env vazia | Variáveis não definidas na Vercel | Conferir os três `NEXT_PUBLIC_*` nos três ambientes |
 | Auth falha só em preview | Redirect URL ausente | Adicionar `https://*-seu-usuario.vercel.app/**` no Supabase |
 | Loja vazia | Catálogo não sincronizado | Rodar workflow `sync-winget-catalog` no GitHub Actions |
-| 401 em APIs | Anonymous Auth desligado | Habilitar em Authentication → Providers |
+| 401 em APIs | Anonymous Auth desligado ou CAPTCHA ativo sem token | Habilitar Anonymous Sign-Ins; **desativar CAPTCHA** em Authentication → Bot and Abuse Protection **ou** configurar `NEXT_PUBLIC_TURNSTILE_SITE_KEY` |

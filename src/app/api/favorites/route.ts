@@ -1,15 +1,14 @@
 import { NextResponse } from "next/server";
 
+import { ensureAuthenticatedUser } from "@/lib/supabase/ensure-user";
 import { createClient } from "@/lib/supabase/server";
 
 export async function GET() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, error: authError } = await ensureAuthenticatedUser(supabase);
 
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (authError) {
+    return authError;
   }
 
   const { data, error } = await supabase
@@ -26,12 +25,10 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, error: authError } = await ensureAuthenticatedUser(supabase);
 
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (authError) {
+    return authError;
   }
 
   const body = await request.json();
@@ -57,12 +54,10 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, error: authError } = await ensureAuthenticatedUser(supabase);
 
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (authError) {
+    return authError;
   }
 
   const package_id = new URL(request.url).searchParams.get("package_id");

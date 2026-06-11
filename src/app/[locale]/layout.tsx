@@ -5,6 +5,7 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { AnonymousAuthBootstrap } from "@/components/auth/anonymous-auth-bootstrap";
 import { ThemeProvider } from "@/components/theme-provider";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
@@ -57,6 +58,7 @@ export default async function LocaleLayout({
             disableTransitionOnChange
           >
             <div className="flex min-h-screen flex-col">
+              <AnonymousAuthBootstrap />
               <Header />
               <main id="main-content" tabIndex={-1} className="flex flex-1 flex-col outline-none">
                 {children}

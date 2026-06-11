@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { generateBundleSlug } from "@/lib/bundles/slug";
+import { ensureAuthenticatedUser } from "@/lib/supabase/ensure-user";
 import { createClient } from "@/lib/supabase/server";
 
 const BUNDLE_SELECT = `
@@ -14,12 +15,10 @@ const BUNDLE_SELECT = `
 
 export async function GET() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, error: authError } = await ensureAuthenticatedUser(supabase);
 
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (authError) {
+    return authError;
   }
 
   const { data, error } = await supabase
@@ -37,12 +36,10 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, error: authError } = await ensureAuthenticatedUser(supabase);
 
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (authError) {
+    return authError;
   }
 
   const body = await request.json();

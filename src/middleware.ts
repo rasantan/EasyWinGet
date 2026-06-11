@@ -6,20 +6,19 @@ import { updateSession } from "./lib/supabase/middleware";
 const intlMiddleware = createIntlMiddleware(routing);
 
 export async function middleware(request: NextRequest) {
-  const supabaseResponse = await updateSession(request);
+  if (request.nextUrl.pathname.startsWith("/api/")) {
+    return updateSession(request);
+  }
+
   const intlResponse = intlMiddleware(request);
-
-  supabaseResponse.cookies.getAll().forEach((cookie) => {
-    intlResponse.cookies.set(cookie.name, cookie.value);
-  });
-
-  return intlResponse;
+  return updateSession(request, intlResponse);
 }
 
 export const config = {
   matcher: [
     "/",
     "/(pt-BR|en)/:path*",
+    "/api/:path*",
     "/((?!api|_next|_vercel|.*\\..*).*)",
   ],
 };

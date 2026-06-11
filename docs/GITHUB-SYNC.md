@@ -93,6 +93,12 @@ O workflow precisa de credenciais Supabase com permissão de escrita na tabela `
 - [ ] `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` criados em **Actions secrets**
 - [ ] Repositório no GitHub com o workflow na branch padrão (`main`)
 
+**Atalho (Windows + GitHub CLI):** com a service role key em mãos:
+
+```powershell
+.\scripts\setup-github-sync.ps1 -ServiceRoleKey "sua-service-role-key"
+```
+
 ---
 
 ## 3. Executar o workflow manualmente (sync completo)

@@ -208,6 +208,14 @@ async function main(): Promise<void> {
     return;
   }
 
+  const exportPath = process.env.SYNC_EXPORT_JSON;
+  if (exportPath) {
+    const { writeFileSync } = await import("node:fs");
+    writeFileSync(exportPath, JSON.stringify(packages, null, 2), "utf8");
+    console.log(`Exported ${packages.length} packages to ${exportPath}`);
+    return;
+  }
+
   const stats = await upsertPackages(packages);
 
   console.log("Sync complete.");

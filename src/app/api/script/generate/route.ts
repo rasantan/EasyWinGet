@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { generateScript } from "@/lib/script-generator/generate";
 import { isScriptLocale } from "@/lib/script-generator/strings";
+import { ensureAuthenticatedUser } from "@/lib/supabase/ensure-user";
 import { createClient } from "@/lib/supabase/server";
 
 const UUID_REGEX =
@@ -59,12 +60,10 @@ export async function POST(request: Request) {
   }
 
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, error: authError } = await ensureAuthenticatedUser(supabase);
 
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (authError) {
+    return authError;
   }
 
   const uniquePackageIds = [...new Set(packageIds)];

@@ -7,9 +7,10 @@
 
 **Última atualização:** 2026-06-11  
 **Fase atual:** 6 — Ajuda, Deploy e Polish  
-**Progresso:** 46 / 47 tarefas
+**Progresso:** 47 / 48 tarefas
 
-> **Pendência final:** 6.7 smoke test em produção (após deploy Vercel). Guias: `docs/DEPLOY-VERCEL.md`, `docs/GITHUB-SYNC.md`, `docs/TEST-PS1.md`.
+> **Site no ar:** https://easywinget.vercel.app  
+> **Ação sua (2 min):** (1) Supabase → Auth → Bot and Abuse Protection → **desativar CAPTCHA**; (2) rodar `.\scripts\setup-github-sync.ps1 -ServiceRoleKey "..."` para sync completo do catálogo
 
 ---
 
@@ -54,7 +55,7 @@
 - [x] **2.4** Sync incremental (manifests alterados últimas 24h)
 - [x] **2.5** Sync completa semanal
 - [x] **2.6** Secrets GitHub: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
-- [~] **2.7** Primeira execução manual e validação de contagem no DB _(guia: `docs/GITHUB-SYNC.md`)_
+- [~] **2.7** Primeira execução manual e validação de contagem no DB _(rodar `scripts/setup-github-sync.ps1`; guia: `docs/GITHUB-SYNC.md`)_
 
 ---
 
@@ -95,6 +96,7 @@
 - [x] **5.5** Botão Download `.ps1`
 - [x] **5.6** Botão Copiar script (clipboard)
 - [~] **5.7** Testar script gerado em Windows 10/11 _(auto: `npm run validate:ps1` ✅; manual: `docs/TEST-PS1.md`)_
+- [x] **5.8** Corrigir 401 em `/api/script/generate` (middleware `/api`, bootstrap auth, fallback `ensureAuthenticatedUser`)
 
 ---
 
@@ -103,10 +105,10 @@
 - [x] **6.1** Página Ajuda (`/[locale]/help`) — MOTW, WinGet, execução PowerShell
 - [x] **6.2** Wizard 3 passos visual (Escolher → Revisar → Baixar)
 - [x] **6.3** Modo Iniciante vs Avançado
-- [~] **6.4** Deploy Vercel + env vars _(config: `vercel.json` + `docs/DEPLOY-VERCEL.md`)_
-- [~] **6.5** Conectar repo GitHub → Vercel _(passos no guia de deploy)_
+- [x] **6.4** Deploy Vercel + env vars
+- [x] **6.5** Conectar repo GitHub → Vercel (CI/CD)
 - [x] **6.6** Revisão acessibilidade (contraste, labels, teclado)
-- [ ] **6.7** Smoke test end-to-end em produção
+- [~] **6.7** Smoke test end-to-end em produção _(site live: easywinget.vercel.app; após desativar CAPTCHA no Supabase)_
 
 ---
 
@@ -132,4 +134,5 @@
 
 ## Notas
 
-<!-- Espaço livre para observações, bloqueios, links úteis -->
+- **401 Unauthorized no download:** CAPTCHA ativo no Supabase bloqueia `signInAnonymously` — desativar em Auth → Bot and Abuse Protection (ver `docs/DEPLOY-VERCEL.md` §7)
+- **Catálogo completo:** sync roda no GitHub Actions (horas); não clonar `winget-pkgs` localmente — usar `scripts/setup-github-sync.ps1`

@@ -266,3 +266,26 @@
 **Próximo:**
 - 2.7: primeira execução manual do workflow e validação de contagem no DB
 - Fase 4: APIs de favoritos e bundles (4.1–4.9)
+
+---
+
+## 2026-06-11 — Fix Unauthorized + preparação sync catálogo
+
+**Feito:**
+- **5.8:** Middleware passa a cobrir `/api/*`; cookies Supabase aplicados na resposta do next-intl com opções completas
+- **`ensureAuthenticatedUser`** em `/api/script/generate`, `/api/favorites`, `/api/bundles`
+- **`/api/auth/bootstrap`** + `AnonymousAuthBootstrap` (Turnstile opcional via `NEXT_PUBLIC_TURNSTILE_SITE_KEY`)
+- **`scripts/setup-github-sync.ps1`** — configura secrets GitHub e dispara workflow `full_sync=true`
+- **`SYNC_EXPORT_JSON`** no script de sync (export sem upsert)
+- Docs: CAPTCHA como causa de 401 em `DEPLOY-VERCEL.md`; atalho sync em `GITHUB-SYNC.md`
+- Tracker: 5.8 `[x]`; progresso 47/48
+
+**Decisões:**
+- Sync completo **não** roda localmente (clone de `winget-pkgs` leva horas) — usar GitHub Actions
+- CAPTCHA ativo no Supabase bloqueia auth anônima; desativar em Bot and Abuse Protection (MVP) ou configurar Turnstile
+- Catálogo ainda com ~20 pacotes (seed) até rodar `setup-github-sync.ps1` com service role key
+
+**Próximo:**
+- Desativar CAPTCHA no Supabase → testar download `.ps1` em produção
+- Rodar `.\scripts\setup-github-sync.ps1 -ServiceRoleKey "..."` → validar `select count(*) from packages`
+- 5.7 teste manual PS1; 6.7 smoke E2E
