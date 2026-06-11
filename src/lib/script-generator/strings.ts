@@ -2,7 +2,7 @@ import type { GuiStrings, ScriptLocale } from "./types";
 
 const GUI_STRINGS: Record<ScriptLocale, GuiStrings> = {
   "pt-BR": {
-    title: "EasyWinGet — Instalador",
+    title: "EasyWinGet - Instalador",
     installAll: "Instalar todos",
     cancel: "Cancelar",
     viewLog: "Ver log",
@@ -18,7 +18,7 @@ const GUI_STRINGS: Record<ScriptLocale, GuiStrings> = {
     packageList: "Pacotes selecionados",
   },
   en: {
-    title: "EasyWinGet — Installer",
+    title: "EasyWinGet - Installer",
     installAll: "Install all",
     cancel: "Cancel",
     viewLog: "View log",

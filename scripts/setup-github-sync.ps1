@@ -18,7 +18,10 @@ $ErrorActionPreference = "Stop"
 
 $Gh = "C:\Program Files\GitHub CLI\gh.exe"
 if (-not (Test-Path $Gh)) {
-  $Gh = (Get-Command gh -ErrorAction SilentlyContinue)?.Source
+  $ghCmd = Get-Command gh -ErrorAction SilentlyContinue
+  if ($ghCmd) {
+    $Gh = $ghCmd.Source
+  }
 }
 if (-not $Gh) {
   throw "GitHub CLI (gh) não encontrado. Instale: winget install GitHub.cli"

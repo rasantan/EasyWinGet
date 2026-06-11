@@ -6,6 +6,7 @@
  */
 
 import { generateScript } from "../src/lib/script-generator/generate.ts";
+import { LAUNCHER_FILENAME } from "../src/lib/script-generator/launcher.ts";
 
 const MOCK_PACKAGES = [
   { package_id: "Git.Git", name: "Git", version: "2.47.1" },
@@ -56,13 +57,47 @@ const ASSERTIONS = [
   },
 ];
 
+const LAUNCHER_ASSERTIONS = [
+  {
+    label: "launcher filename constant",
+    test: () => LAUNCHER_FILENAME === "easywinget-install.cmd",
+  },
+  {
+    label: "embedded PS1 markers",
+    test: (launcher) =>
+      launcher.includes("::EWG_PS1_BEGIN") &&
+      launcher.includes("::EWG_PS1_END"),
+  },
+  {
+    label: "ExecutionPolicy Bypass",
+    test: (launcher) => launcher.includes("-ExecutionPolicy Bypass"),
+  },
+  {
+    label: "admin elevation (RunAs)",
+    test: (launcher) => launcher.includes("-Verb RunAs"),
+  },
+  {
+    label: "64-bit System32 powershell",
+    test: (launcher) =>
+      launcher.includes("System32\\WindowsPowerShell\\v1.0\\powershell.exe"),
+  },
+  {
+    label: "self path for extraction",
+    test: (launcher) => launcher.includes("EWG_SELF=%~f0"),
+  },
+  {
+    label: "net session admin check",
+    test: (launcher) => launcher.includes("net session"),
+  },
+];
+
 const LOCALE_STRINGS = {
-  "pt-BR": "EasyWinGet — Instalador",
-  en: "EasyWinGet — Installer",
+  "pt-BR": "EasyWinGet - Instalador",
+  en: "EasyWinGet - Installer",
 };
 
 function validateLocale(locale) {
-  const { script, hash } = generateScript({
+  const { script, launcher, hash } = generateScript({
     packages: MOCK_PACKAGES,
     locale,
     bundle_name: "Validate PS1",
@@ -91,6 +126,20 @@ function validateLocale(locale) {
 
   if (!script.includes(`"locale": "${locale}"`)) {
     failures.push(`manifest locale not set to ${locale}`);
+  }
+
+  if (typeof launcher !== "string" || launcher.length < script.length) {
+    failures.push("launcher missing or smaller than embedded script");
+  }
+
+  for (const { label, test } of LAUNCHER_ASSERTIONS) {
+    if (!test(launcher, locale)) {
+      failures.push(`launcher: missing or invalid: ${label}`);
+    }
+  }
+
+  if (!launcher.includes(hash)) {
+    failures.push("launcher missing script hash");
   }
 
   return failures;

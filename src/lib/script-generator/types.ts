@@ -26,6 +26,7 @@ export type GenerateScriptInput = {
 
 export type GenerateScriptResult = {
   script: string;
+  launcher: string;
   hash: string;
 };
 

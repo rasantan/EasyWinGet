@@ -83,6 +83,7 @@
     "packageId": "WinGet identifier",
     "installerType": "Installer type",
     "addToCartNamed": "Add {name} to cart",
+    "removeFromCartNamed": "Remove {name} from cart",
     "inCart": "In cart"
   },
   "bundles": {
@@ -187,7 +188,7 @@
       "step3": {
         "number": "Step 3",
         "title": "Download",
-        "description": "Download the .ps1 file and run it in PowerShell to install everything at once."
+        "description": "Download the installer (.cmd) and double-click it to install everything at once."
       }
     },
     "mode": {
@@ -215,27 +216,27 @@
         "title": "1. What is EasyWinGet",
         "description": "EasyWinGet is a simple, accessible web store that uses the official WinGet (Windows Package Manager) catalog to install applications on Windows 10 and 11.",
         "point1": "Pick apps visually without memorizing package names.",
-        "point2": "We generate a PowerShell script (.ps1) that installs everything automatically.",
+        "point2": "We generate an installer (.cmd) that opens a graphical window and installs everything automatically — no PowerShell setup required.",
         "point3": "Free, bilingual (PT/EN), and designed for non-technical users."
       },
       "downloadRun": {
-        "title": "2. How to download and run the install script",
+        "title": "2. How to download and run the installer",
         "intro": "After building your cart in the store, follow these steps to install your apps:",
         "step1": "Open the cart and confirm all desired apps are listed.",
-        "step2": "Click download script to save the .ps1 file to your computer.",
-        "step3": "Open the Start menu, type PowerShell, and right-click Windows PowerShell.",
-        "step4": "Choose Run as administrator — required to install most apps.",
-        "step5": "Type cd Downloads (or the folder where you saved the file) and press Enter. Then type .\\script-name.ps1 and press Enter."
+        "step2": "Click download installer to save easywinget-install.cmd to your computer.",
+        "step3": "Open your Downloads folder (or where you saved the file) and double-click easywinget-install.cmd.",
+        "step4": "If Windows asks for administrator permission (UAC), click Yes — required to install most apps.",
+        "step5": "Wait for the EasyWinGet window to open, review the list, and click Install all."
       },
       "motw": {
-        "title": "3. How to unblock a downloaded file (Mark-of-the-Web)",
-        "intro": "Windows marks files downloaded from the internet with a protection called Mark-of-the-Web (MOTW). This can block script execution. Follow these steps to unblock:",
-        "step1": "Find the .ps1 file in your Downloads folder (or wherever you saved it).",
-        "step2": "Right-click the file and choose Properties.",
-        "step3": "On the General tab, scroll to the bottom and check the Unblock box.",
-        "step4": "Click Apply, then OK.",
-        "step5": "Run the script again in PowerShell as administrator.",
-        "tip": "Tip: to avoid the block entirely, use the Notepad alternative below — files saved locally do not get the web mark."
+        "title": "3. PowerShell execution policy (does not apply to .cmd)",
+        "intro": "The .cmd installer bypasses PowerShell execution policy automatically. If you copy the .ps1 script manually (Advanced mode), you may see \"script is not digitally signed\".",
+        "step1": "Always prefer the easywinget-install.cmd file from the site — just double-click it.",
+        "step2": "The .cmd requests administrator permission when needed and runs PowerShell with execution policy bypass.",
+        "step3": "If you still run the .ps1 directly, open PowerShell and run: powershell -ExecutionPolicy Bypass -File .\\easywinget-install.ps1",
+        "step4": "Permanent alternative (optional): Set-ExecutionPolicy RemoteSigned -Scope CurrentUser",
+        "step5": "For scripts downloaded from the internet, Windows may also apply Mark-of-the-Web — see below.",
+        "tip": "Tip: the .cmd installer automatically unblocks (MOTW) the embedded script."
       },
       "installWinget": {
         "title": "4. How to install WinGet (App Installer)",
@@ -257,7 +258,7 @@
       "faq": {
         "title": "6. Frequently asked questions",
         "q1": "Do I need to be a computer administrator?",
-        "a1": "In most cases, yes. Installing applications on Windows requires administrator permissions. Run PowerShell as administrator before running the script.",
+        "a1": "In most cases, yes. The .cmd installer automatically requests administrator permission (UAC prompt) when you are not already elevated.",
         "q2": "Is the script safe?",
         "a2": "The script only installs packages you chose in the store, using Microsoft's official winget command. You can review the content in Advanced mode before downloading.",
         "q3": "Does it work on Windows 10?",
@@ -273,7 +274,7 @@
     }
   },
   "script": {
-    "downloadPs1": "Download .ps1 script",
+    "downloadInstaller": "Download installer (.cmd)",
     "copyScript": "Copy script",
     "previewScript": "Preview script",
     "advancedMode": "Advanced mode (preview script)",

@@ -1,9 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -12,8 +9,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { FavoriteButton } from "@/components/bundles/favorite-button";
+import { AddToCartButton } from "@/components/store/add-to-cart-button";
 import { Link } from "@/i18n/navigation";
-import { useCartStore } from "@/lib/cart-store";
 import {
   formatCategoryLabel,
   getCategoryIcon,
@@ -25,24 +22,8 @@ type PackageCardProps = {
 };
 
 export function PackageCard({ pkg }: PackageCardProps) {
-  const t = useTranslations("package");
-  const tCommon = useTranslations("common");
-  const add = useCartStore((state) => state.add);
-
   const primaryCategory = pkg.categories[0] ?? "utilities";
   const CategoryIcon = getCategoryIcon(primaryCategory);
-
-  const handleAdd = () => {
-    add({
-      id: pkg.id,
-      package_id: pkg.package_id,
-      name: pkg.name,
-      publisher: pkg.publisher,
-      version: pkg.version,
-      categories: pkg.categories,
-      installer_type: pkg.installer_type,
-    });
-  };
 
   return (
     <Card className="flex h-full flex-col transition-colors hover:bg-muted/30">
@@ -74,14 +55,7 @@ export function PackageCard({ pkg }: PackageCardProps) {
         </Badge>
       </CardContent>
       <CardFooter>
-        <Button
-          type="button"
-          className="min-h-11 w-full"
-          onClick={handleAdd}
-          aria-label={t("addToCartNamed", { name: pkg.name })}
-        >
-          {tCommon("add")}
-        </Button>
+        <AddToCartButton pkg={pkg} className="w-full sm:w-full" />
       </CardFooter>
     </Card>
   );

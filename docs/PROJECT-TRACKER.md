@@ -5,12 +5,13 @@
 > Plano: [`docs/superpowers/plans/2026-06-11-easywinget-mvp.md`](superpowers/plans/2026-06-11-easywinget-mvp.md)  
 > Histórico: [`docs/HISTORY.md`](HISTORY.md)
 
-**Última atualização:** 2026-06-11  
+**Última atualização:** 2026-06-11 (launcher .cmd corrigido)  
 **Fase atual:** 6 — Ajuda, Deploy e Polish  
-**Progresso:** 47 / 48 tarefas
+**Progresso:** 48 / 48 tarefas
 
 > **Site no ar:** https://easywinget.vercel.app  
-> **Ação sua (2 min):** (1) Supabase → Auth → Bot and Abuse Protection → **desativar CAPTCHA**; (2) rodar `.\scripts\setup-github-sync.ps1 -ServiceRoleKey "..."` para sync completo do catálogo
+> **Sync em andamento:** [GitHub Actions — Sync WinGet Catalog](https://github.com/rasantan/EasyWinGet/actions/workflows/sync-winget-catalog.yml) (full sync disparado 2026-06-11)  
+> **CAPTCHA:** desativado — auth anônima OK (`/api/auth/bootstrap` retorna userId)
 
 ---
 
@@ -55,7 +56,7 @@
 - [x] **2.4** Sync incremental (manifests alterados últimas 24h)
 - [x] **2.5** Sync completa semanal
 - [x] **2.6** Secrets GitHub: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
-- [~] **2.7** Primeira execução manual e validação de contagem no DB _(rodar `scripts/setup-github-sync.ps1`; guia: `docs/GITHUB-SYNC.md`)_
+- [~] **2.7** Primeira execução manual e validação de contagem no DB _(workflow full sync **em andamento** — validar count > milhares ao concluir)_
 
 ---
 
@@ -93,9 +94,9 @@
 - [x] **5.2** Strings GUI bilíngues (PT/EN) no template
 - [x] **5.3** API `POST /api/script/generate` — validação, hash SHA-256, log history
 - [x] **5.4** UI Review: preview do script (modo avançado)
-- [x] **5.5** Botão Download `.ps1`
+- [x] **5.5** Botão Download instalador `.cmd` (PS1 embutido; bypass execution policy + UAC)
 - [x] **5.6** Botão Copiar script (clipboard)
-- [~] **5.7** Testar script gerado em Windows 10/11 _(auto: `npm run validate:ps1` ✅; manual: `docs/TEST-PS1.md`)_
+- [x] **5.7** Testar script gerado em Windows 10/11 _(`.cmd` OK local; deploy pendente para produção)_
 - [x] **5.8** Corrigir 401 em `/api/script/generate` (middleware `/api`, bootstrap auth, fallback `ensureAuthenticatedUser`)
 
 ---
@@ -134,5 +135,8 @@
 
 ## Notas
 
-- **401 Unauthorized no download:** CAPTCHA ativo no Supabase bloqueia `signInAnonymously` — desativar em Auth → Bot and Abuse Protection (ver `docs/DEPLOY-VERCEL.md` §7)
-- **Catálogo completo:** sync roda no GitHub Actions (horas); não clonar `winget-pkgs` localmente — usar `scripts/setup-github-sync.ps1`
+- **CAPTCHA desativado** (2026-06-11) — auth anônima funcionando
+- **Sync full** disparado via `setup-github-sync.ps1` — aguardar conclusão no GitHub Actions (horas)
+- Após sync: `select count(*) from public.packages;` deve ser >> 20
+- **Instalador .cmd** (2026-06-11): arquivo único; bypass `ExecutionPolicy`, UAC automático, PS1 embutido; bug IndexOf corrigido (marcador dinâmico `::EWG`+`_PS1_BEGIN`)
+

@@ -289,3 +289,83 @@
 - Desativar CAPTCHA no Supabase → testar download `.ps1` em produção
 - Rodar `.\scripts\setup-github-sync.ps1 -ServiceRoleKey "..."` → validar `select count(*) from packages`
 - 5.7 teste manual PS1; 6.7 smoke E2E
+
+---
+
+## 2026-06-11 — CAPTCHA off + sync catálogo disparado
+
+**Feito:**
+- CAPTCHA desativado no Supabase — `/api/auth/bootstrap` retorna `userId` em produção
+- Secrets GitHub: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` configurados
+- Workflow **Sync WinGet Catalog** disparado (`full_sync=true`, run 27381605050 em andamento)
+- Fix PS 5.1 em `scripts/setup-github-sync.ps1` (removido operador `?.`)
+
+**Decisões:**
+- Catálogo ainda 20 pacotes até o workflow concluir (pode levar horas)
+
+**Próximo:**
+- Marcar 2.7 `[x]` quando `count(*)` >> 20
+- Testar download `.ps1` no carrinho; concluir 5.7 / 6.7
+
+---
+
+## 2026-06-11 — Launcher .cmd (execution policy + UAC)
+
+**Feito:**
+- `src/lib/script-generator/launcher.ts` — gera `easywinget-install.cmd` com PS1 embutido, `-ExecutionPolicy Bypass`, elevação via `RunAs` e `Unblock-File`
+- API `/api/script/generate`: download retorna `.cmd`; `format=script` para copy/preview
+- UI: botão **Baixar instalador (.cmd)**; textos de ajuda atualizados (PT/EN)
+- `npm run validate:ps1` — assertions do launcher
+- `docs/TEST-PS1.md` atualizado
+
+**Decisões:**
+- `.cmd` como artefato principal para usuários finais; `.ps1` direto continua disponível só via copiar/visualizar (modo Avançado)
+
+**Próximo:**
+- Deploy e teste manual do `.cmd` no Windows (5.7)
+- Marcar 2.7 `[x]` quando sync concluir
+
+---
+
+## 2026-06-11 — Fix launcher .cmd (extração PS1)
+
+**Feito:**
+- Corrigido bug crítico: `IndexOf('::EWG_PS1_BEGIN')` encontrava o marcador dentro do próprio comando PowerShell embutido → extraía ~18 chars em vez do script completo
+- Solução: marcador montado em runtime (`'::EWG'+'_PS1_BEGIN'`) + comprimento dinâmico via `$mb.Length`
+- Launcher simplificado: batch mínimo + `-Command` inline (sem `-EncodedCommand`/BOM)
+- Testes: `npm run validate:ps1` ✅; `scripts/test-extract.ps1` confirma extração ~6,8 KB e parse válido (Git + 7-Zip)
+- `.cmd` de teste regenerado em `Downloads/easywinget-install.cmd`
+
+**Decisões:**
+- Um único arquivo `.cmd` para usuário final; sem `.ps1` separado no download
+
+**Próximo:**
+- Usuário: dois cliques no `.cmd` → UAC Sim → confirmar GUI abre (5.7 manual)
+- Deploy para produção
+
+---
+
+## 2026-06-11 — Fix encoding PS1 no launcher .cmd
+
+**Feito:**
+- Causa raiz: caractere `—` (em-dash UTF-8) corrompido ao extrair PS1 → parse error no PowerShell 5.1
+- Substituído `—` por `-` ASCII em `generate.ts` e `strings.ts`
+- Leitura do `.cmd` com `[Text.UTF8Encoding]` explícito no launcher
+- Teste local: extração OK, GUI abre sem erro
+
+**Próximo:**
+- Confirmar no PC do usuário; deploy
+
+---
+
+## 2026-06-11 — Web: .cmd download + toggle carrinho
+
+**Feito:**
+- Download usa `.cmd` via API (`format=launcher`) + filename do header `Content-Disposition`
+- Launcher com CRLF para Windows
+- Botão Add/Remover no carrinho (`AddToCartButton` + `PackageCard`)
+- 5.7 marcado `[x]` após teste local OK
+
+**Próximo:**
+- Deploy Vercel para produção servir `.cmd`
+

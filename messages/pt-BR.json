@@ -83,6 +83,7 @@
     "packageId": "Identificador WinGet",
     "installerType": "Tipo de instalador",
     "addToCartNamed": "Adicionar {name} ao carrinho",
+    "removeFromCartNamed": "Remover {name} do carrinho",
     "inCart": "No carrinho"
   },
   "bundles": {
@@ -187,7 +188,7 @@
       "step3": {
         "number": "Passo 3",
         "title": "Baixar",
-        "description": "Baixe o arquivo .ps1 e execute no PowerShell para instalar tudo de uma vez."
+        "description": "Baixe o instalador (.cmd) e dê dois cliques para instalar tudo de uma vez."
       }
     },
     "mode": {
@@ -215,27 +216,27 @@
         "title": "1. O que é o EasyWinGet",
         "description": "O EasyWinGet é uma loja web simples e acessível que usa o catálogo oficial do WinGet (Windows Package Manager) para instalar aplicativos no Windows 10 e 11.",
         "point1": "Você escolhe apps visualmente, sem memorizar nomes de pacotes.",
-        "point2": "Geramos um script PowerShell (.ps1) que instala tudo automaticamente.",
+        "point2": "Geramos um instalador (.cmd) que abre uma janela gráfica e instala tudo automaticamente — sem configurar PowerShell.",
         "point3": "Gratuito, bilíngue (PT/EN) e pensado para quem não é especialista em TI."
       },
       "downloadRun": {
-        "title": "2. Como baixar e executar o script",
+        "title": "2. Como baixar e executar o instalador",
         "intro": "Depois de montar seu carrinho na loja, siga estes passos para instalar os aplicativos:",
         "step1": "Abra o carrinho e confira se todos os apps desejados estão listados.",
-        "step2": "Clique em baixar script para salvar o arquivo .ps1 no seu computador.",
-        "step3": "Abra o menu Iniciar, digite PowerShell e clique com o botão direito em Windows PowerShell.",
-        "step4": "Escolha Executar como administrador — necessário para instalar a maioria dos apps.",
-        "step5": "Digite cd Downloads (ou a pasta onde salvou o arquivo) e pressione Enter. Depois digite .\\nome-do-script.ps1 e pressione Enter."
+        "step2": "Clique em baixar instalador para salvar o arquivo easywinget-install.cmd no seu computador.",
+        "step3": "Abra a pasta Downloads (ou onde salvou o arquivo) e dê dois cliques em easywinget-install.cmd.",
+        "step4": "Se o Windows pedir permissão de administrador (UAC), clique em Sim — necessário para instalar a maioria dos apps.",
+        "step5": "Aguarde a janela do EasyWinGet abrir, confira a lista e clique em Instalar todos."
       },
       "motw": {
-        "title": "3. Como desbloquear o arquivo baixado (Mark-of-the-Web)",
-        "intro": "O Windows marca arquivos baixados da internet com uma proteção chamada Mark-of-the-Web (MOTW). Isso pode impedir a execução do script. Siga estes passos para desbloquear:",
-        "step1": "Localize o arquivo .ps1 na pasta Downloads (ou onde você salvou).",
-        "step2": "Clique com o botão direito no arquivo e escolha Propriedades.",
-        "step3": "Na aba Geral, role até o final e marque a caixa Desbloquear.",
-        "step4": "Clique em Aplicar e depois em OK.",
-        "step5": "Execute o script novamente no PowerShell como administrador.",
-        "tip": "Dica: se preferir evitar o bloqueio, use a alternativa do Bloco de Notas descrita abaixo — arquivos salvos localmente não recebem a marca da web."
+        "title": "3. Política de execução do PowerShell (não se aplica ao .cmd)",
+        "intro": "O instalador .cmd contorna automaticamente a política de execução do PowerShell. Se você copiar o script .ps1 manualmente (modo Avançado), pode ver o erro \"script is not digitally signed\".",
+        "step1": "Prefira sempre o arquivo easywinget-install.cmd baixado pelo site — basta dar dois cliques.",
+        "step2": "O .cmd pede permissão de administrador quando necessário e executa o PowerShell com bypass de política.",
+        "step3": "Se ainda usar o .ps1 diretamente, abra o PowerShell e rode: powershell -ExecutionPolicy Bypass -File .\\easywinget-install.ps1",
+        "step4": "Alternativa permanente (opcional): Set-ExecutionPolicy RemoteSigned -Scope CurrentUser",
+        "step5": "Para scripts baixados da internet, o Windows também pode aplicar Mark-of-the-Web — veja a seção abaixo.",
+        "tip": "Dica: o instalador .cmd já inclui desbloqueio automático (MOTW) do script embutido."
       },
       "installWinget": {
         "title": "4. Como instalar o WinGet (App Installer)",
@@ -257,7 +258,7 @@
       "faq": {
         "title": "6. Perguntas frequentes",
         "q1": "Preciso ser administrador do computador?",
-        "a1": "Sim, na maioria dos casos. Instalar aplicativos no Windows exige permissões de administrador. Execute o PowerShell como administrador antes de rodar o script.",
+        "a1": "Na maioria dos casos, sim. O instalador .cmd pede permissão de administrador automaticamente (janela UAC) quando você ainda não está elevado.",
         "q2": "O script é seguro?",
         "a2": "O script só instala os pacotes que você escolheu na loja, usando o comando oficial winget da Microsoft. Você pode revisar o conteúdo no modo Avançado antes de baixar.",
         "q3": "Funciona no Windows 10?",
@@ -273,7 +274,7 @@
     }
   },
   "script": {
-    "downloadPs1": "Baixar script .ps1",
+    "downloadInstaller": "Baixar instalador (.cmd)",
     "copyScript": "Copiar script",
     "previewScript": "Visualizar script",
     "advancedMode": "Modo avançado (visualizar script)",

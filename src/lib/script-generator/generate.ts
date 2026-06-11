@@ -1,5 +1,6 @@
 import { createHash } from "crypto";
 
+import { generateCmdLauncher } from "./launcher";
 import { getGuiStrings } from "./strings";
 import type {
   GenerateScriptInput,
@@ -98,7 +99,7 @@ $listBox.Location = New-Object System.Drawing.Point(12, 36)
 $listBox.Size = New-Object System.Drawing.Size(600, 260)
 $listBox.SelectionMode = [System.Windows.Forms.SelectionMode]::None
 foreach ($pkg in $EasyWinGetManifest.packages) {
-  [void]$listBox.Items.Add(("{0} — {1} (v{2}) [{3}]" -f $GuiStrings.pending, $pkg.name, $pkg.version, $pkg.id))
+  [void]$listBox.Items.Add(("{0} - {1} (v{2}) [{3}]" -f $GuiStrings.pending, $pkg.name, $pkg.version, $pkg.id))
 }
 $form.Controls.Add($listBox)
 
@@ -180,7 +181,7 @@ $btnInstall.Add_Click({
     $statusLabel.Text = ("{0} {1}..." -f $GuiStrings.installing, $pkg.name)
     [void]$form.Refresh()
 
-    $listBox.Items[$index - 1] = ("{0} — {1} (v{2}) [{3}]" -f $GuiStrings.installing, $pkg.name, $pkg.version, $pkg.id)
+    $listBox.Items[$index - 1] = ("{0} - {1} (v{2}) [{3}]" -f $GuiStrings.installing, $pkg.name, $pkg.version, $pkg.id)
     [void]$script:LogEntries.Add(("{0} {1} ({2})" -f $GuiStrings.installing, $pkg.name, $pkg.id))
 
     $wingetArgs = @(
@@ -195,11 +196,11 @@ $btnInstall.Add_Click({
     $exitCode = $LASTEXITCODE
 
     if ($exitCode -eq 0) {
-      $listBox.Items[$index - 1] = ("{0} — {1} (v{2}) [{3}]" -f $GuiStrings.success, $pkg.name, $pkg.version, $pkg.id)
+      $listBox.Items[$index - 1] = ("{0} - {1} (v{2}) [{3}]" -f $GuiStrings.success, $pkg.name, $pkg.version, $pkg.id)
       [void]$script:LogEntries.Add(("{0}: {1}" -f $GuiStrings.success, $pkg.name))
     }
     else {
-      $listBox.Items[$index - 1] = ("{0} — {1} (v{2}) [{3}]" -f $GuiStrings.failed, $pkg.name, $pkg.version, $pkg.id)
+      $listBox.Items[$index - 1] = ("{0} - {1} (v{2}) [{3}]" -f $GuiStrings.failed, $pkg.name, $pkg.version, $pkg.id)
       [void]$script:LogEntries.Add(("{0}: {1} (exit {2}){3}{4}" -f $GuiStrings.failed, $pkg.name, $exitCode, [Environment]::NewLine, $output.Trim()))
     }
 
@@ -239,6 +240,7 @@ export function generateScript(input: GenerateScriptInput): GenerateScriptResult
     .digest("hex");
 
   const script = scriptWithPlaceholder.replace(HASH_PLACEHOLDER, hash);
+  const launcher = generateCmdLauncher(script, hash).replace(/\n/g, "\r\n");
 
-  return { script, hash };
+  return { script, launcher, hash };
 }

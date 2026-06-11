@@ -1,4 +1,4 @@
-# Teste do script PowerShell (.ps1)
+# Teste do instalador (.cmd) e script PowerShell (.ps1)
 
 Validação automatizada (CI/local) e checklist manual no Windows.
 
@@ -15,25 +15,32 @@ O script `scripts/validate-ps1-generator.mjs` chama `generateScript` com pacotes
 - Comando `winget install` via `$wingetArgs`
 - GUI `System.Windows.Forms`
 - Strings de interface por locale
-- Hash SHA-256 real no cabeçalho (não placeholder)
+- Launcher `.cmd` com marcadores dinâmicos e extração por índice (evita falso positivo no comando embutido)
+
+Extração do PS1 embutido (smoke test local):
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-extract.ps1
+```
+
+(Ajuste `$env:EWG_SELF` no script se o `.cmd` não estiver em `Downloads`.)
 
 ## Teste manual no Windows (obrigatório antes de release)
 
 Requer Windows 10/11 com **App Installer** (WinGet) instalado.
 
-### 1. Gerar o script
+### 1. Gerar o instalador
 
 1. Abra o EasyWinGet (`npm run dev` ou deploy).
 2. Adicione ao carrinho **Git** (`Git.Git`) e **7-Zip** (`7zip.7zip`).
-3. Vá ao carrinho e clique em **Baixar script** / **Download script**.
-4. Salve `easywinget-install.ps1`.
+3. Vá ao carrinho e clique em **Baixar instalador (.cmd)**.
+4. Salve `easywinget-install.cmd`.
 
-### 2. Executar
+### 2. Executar (fluxo recomendado)
 
-1. Clique com o botão direito no `.ps1` → **Executar com PowerShell**  
-   (ou abra PowerShell e rode: `powershell -ExecutionPolicy Bypass -File .\easywinget-install.ps1`)
-2. Se o Windows bloquear por MOTW, confirme que o script contém `Unblock-File` ou desbloqueie manualmente:  
-   `Unblock-File -Path .\easywinget-install.ps1`
+1. Dê **dois cliques** em `easywinget-install.cmd` na pasta Downloads.
+2. Se aparecer o UAC, clique em **Sim** (permissão de administrador).
+3. Não é necessário abrir PowerShell nem alterar `ExecutionPolicy`.
 
 ### 3. Verificar GUI e instalação
 
@@ -43,14 +50,21 @@ Requer Windows 10/11 com **App Installer** (WinGet) instalado.
 - [ ] Pacotes instalam com sucesso (ou falha explícita com log)
 - [ ] **Ver log** mostra saída das instalações
 
-### 4. Auditar manifesto
+### 4. Política de execução (regressão)
 
-No topo do `.ps1`, confira o bloco JSON em `$EasyWinGetManifest`:
+Em PowerShell com política restritiva (`Restricted`):
+
+- [ ] `.\easywinget-install.ps1` **falha** com erro de script não assinado (esperado se rodar .ps1 direto)
+- [ ] `.\easywinget-install.cmd` **funciona** sem pedir `Set-ExecutionPolicy`
+
+### 5. Auditar manifesto
+
+No modo Avançado, copie ou visualize o `.ps1` embutido e confira `$EasyWinGetManifest`:
 
 - [ ] `locale` corresponde ao idioma da UI
 - [ ] `packages` contém exatamente os itens do carrinho
 - [ ] Nenhum pacote extra além da seleção
 
-### 5. WinGet ausente (opcional)
+### 6. WinGet ausente (opcional)
 
 Em VM ou perfil sem WinGet: o script deve exibir MessageBox de aviso e encerrar com código 1.

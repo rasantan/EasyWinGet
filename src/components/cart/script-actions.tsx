@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { LAUNCHER_FILENAME } from "@/lib/script-generator/launcher";
 
 export type ScriptCartItem = {
   id: string;
@@ -27,14 +28,24 @@ type ScriptActionsProps = {
 };
 
 type FetchScriptResult = {
-  script: string;
+  content: string;
   hash: string | null;
+  filename: string;
 };
+
+function parseDownloadFilename(disposition: string | null): string {
+  if (!disposition) {
+    return LAUNCHER_FILENAME;
+  }
+  const match = disposition.match(/filename="([^"]+)"/i);
+  return match?.[1] ?? LAUNCHER_FILENAME;
+}
 
 async function fetchGeneratedScript(
   items: ScriptCartItem[],
   locale: string,
   bundleName?: string,
+  format: "launcher" | "script" = "launcher",
 ): Promise<FetchScriptResult> {
   const response = await fetch("/api/script/generate", {
     method: "POST",
@@ -43,6 +54,7 @@ async function fetchGeneratedScript(
       package_ids: items.map((item) => item.id),
       locale,
       bundle_name: bundleName,
+      format,
     }),
   });
 
@@ -59,19 +71,22 @@ async function fetchGeneratedScript(
     throw new Error(message);
   }
 
-  const script = await response.text();
+  const content = await response.text();
   return {
-    script,
+    content,
     hash: response.headers.get("X-Script-Hash"),
+    filename: parseDownloadFilename(
+      response.headers.get("Content-Disposition"),
+    ),
   };
 }
 
-function triggerDownload(script: string) {
-  const blob = new Blob([script], { type: "application/octet-stream" });
+function triggerDownload(content: string, filename: string) {
+  const blob = new Blob([content], { type: "application/octet-stream" });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = "easywinget-install.ps1";
+  anchor.download = filename;
   anchor.click();
   URL.revokeObjectURL(url);
 }
@@ -98,19 +113,21 @@ export function ScriptActions({ items, bundleName }: ScriptActionsProps) {
       setCopySuccess(false);
 
       try {
-        const { script, hash } = await fetchGeneratedScript(
+        const format = action === "download" ? "launcher" : "script";
+        const { content, hash, filename } = await fetchGeneratedScript(
           items,
           locale,
           bundleName,
+          format,
         );
 
         if (action === "download") {
-          triggerDownload(script);
+          triggerDownload(content, filename);
         } else if (action === "copy") {
-          await navigator.clipboard.writeText(script);
+          await navigator.clipboard.writeText(content);
           setCopySuccess(true);
         } else {
-          setPreviewScript(script);
+          setPreviewScript(content);
           setPreviewHash(hash);
           setPreviewOpen(true);
         }
@@ -135,7 +152,7 @@ export function ScriptActions({ items, bundleName }: ScriptActionsProps) {
           onClick={() => runAction("download")}
         >
           <Download aria-hidden="true" />
-          {loadingAction === "download" ? t("generating") : t("downloadPs1")}
+          {loadingAction === "download" ? t("generating") : t("downloadInstaller")}
         </Button>
 
         <Button

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { generateScript } from "@/lib/script-generator/generate";
+import { LAUNCHER_FILENAME } from "@/lib/script-generator/launcher";
 import { isScriptLocale } from "@/lib/script-generator/strings";
 import { ensureAuthenticatedUser } from "@/lib/supabase/ensure-user";
 import { createClient } from "@/lib/supabase/server";
@@ -12,6 +13,7 @@ type GenerateRequestBody = {
   package_ids?: unknown;
   locale?: unknown;
   bundle_name?: unknown;
+  format?: unknown;
 };
 
 function isUuid(value: string): boolean {
@@ -59,6 +61,8 @@ export async function POST(request: Request) {
     );
   }
 
+  const format = body.format === "script" ? "script" : "launcher";
+
   const supabase = await createClient();
   const { user, error: authError } = await ensureAuthenticatedUser(supabase);
 
@@ -91,7 +95,7 @@ export async function POST(request: Request) {
     .map((id) => packages.find((pkg) => pkg.id === id))
     .filter((pkg): pkg is NonNullable<typeof pkg> => Boolean(pkg));
 
-  const { script, hash } = generateScript({
+  const { script, launcher, hash } = generateScript({
     packages: orderedPackages.map((pkg) => ({
       package_id: pkg.package_id,
       name: pkg.name,
@@ -114,11 +118,16 @@ export async function POST(request: Request) {
     );
   }
 
-  return new NextResponse(script, {
+  const payload = format === "script" ? script : launcher;
+  const filename =
+    format === "script" ? "easywinget-install.ps1" : LAUNCHER_FILENAME;
+
+  return new NextResponse(payload, {
     headers: {
       "Content-Type": "application/octet-stream",
-      "Content-Disposition": 'attachment; filename="easywinget-install.ps1"',
+      "Content-Disposition": `attachment; filename="${filename}"`,
       "X-Script-Hash": hash,
+      "X-Download-Format": format,
     },
   });
 }
