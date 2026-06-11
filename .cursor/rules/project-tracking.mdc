@@ -1,0 +1,42 @@
+---
+description: Manter tracker de progresso e histórico do projeto sempre atualizados
+alwaysApply: true
+---
+
+# Rastreamento de Progresso — EasyWinGet
+
+## Arquivos obrigatórios
+
+| Arquivo | Função |
+|---------|--------|
+| `docs/PROJECT-TRACKER.md` | Board vivo — tarefas, status, fase atual |
+| `docs/HISTORY.md` | Log cronológico de tudo que foi feito |
+| `docs/superpowers/plans/2026-06-11-easywinget-mvp.md` | Plano detalhado de implementação |
+| `docs/superpowers/specs/2026-06-11-easywinget-design.md` | Spec aprovada |
+
+## Quando atualizar (SEMPRE)
+
+1. **Início de sessão** — ler `docs/PROJECT-TRACKER.md` para saber onde parou
+2. **Ao concluir tarefa** — marcar `[x]` no tracker; atualizar contadores e `Última atualização`
+3. **Ao adicionar/remover tarefa** — editar tracker (seção Backlog ou fase correspondente); registrar no HISTORY
+4. **Ao terminar sessão ou entrega** — append em `docs/HISTORY.md` com data, o que foi feito, decisões e próximos passos
+5. **Ao mudar escopo** — atualizar spec ou plan se necessário; nunca só na conversa
+
+## Formato HISTORY (append)
+
+```markdown
+## YYYY-MM-DD — [Título da sessão]
+
+**Feito:**
+- item 1
+
+**Decisões:**
+- decisão (se houver)
+
+**Próximo:**
+- próxima tarefa do tracker
+```
+
+## Regra de ouro
+
+Nunca confiar só no histórico do chat. O tracker e o HISTORY no repo são a fonte da verdade entre sessões.

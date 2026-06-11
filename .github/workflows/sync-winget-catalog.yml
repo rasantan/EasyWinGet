@@ -1,0 +1,73 @@
+name: Sync WinGet Catalog
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+    - cron: "0 4 * * 0"
+  workflow_dispatch:
+    inputs:
+      full_sync:
+        description: "Run full catalog sync (requires winget-pkgs checkout)"
+        type: boolean
+        default: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Determine sync mode
+        id: mode
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            if [ "${{ inputs.full_sync }}" = "true" ]; then
+              echo "full=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "full=false" >> "$GITHUB_OUTPUT"
+            fi
+          elif [ "${{ github.event.schedule }}" = "0 4 * * 0" ]; then
+            echo "full=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "full=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout EasyWinGet
+        uses: actions/checkout@v4
+
+      - name: Checkout winget-pkgs (full sync)
+        if: steps.mode.outputs.full == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: microsoft/winget-pkgs
+          path: winget-pkgs
+          sparse-checkout: manifests
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: scripts/sync-winget/package-lock.json
+
+      - name: Install sync dependencies
+        working-directory: scripts/sync-winget
+        run: npm ci
+
+      - name: Run WinGet catalog sync
+        working-directory: scripts/sync-winget
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FULL_SYNC: ${{ steps.mode.outputs.full }}
+          WINGET_PKGS_DIR: ${{ steps.mode.outputs.full == 'true' && 'winget-pkgs/manifests' || '' }}
+        run: npm run start
+
+      - name: Sync summary
+        if: always()
+        run: |
+          echo "### WinGet catalog sync" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Mode: ${{ steps.mode.outputs.full == 'true' && 'full' || 'incremental' }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Trigger: ${{ github.event_name }}" >> "$GITHUB_STEP_SUMMARY"

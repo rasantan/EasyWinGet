@@ -1,0 +1,287 @@
+{
+  "nav": {
+    "home": "Início",
+    "store": "Loja",
+    "cart": "Carrinho",
+    "bundles": "Bundles",
+    "help": "Ajuda"
+  },
+  "header": {
+    "logoLabel": "EasyWinGet — Ir para início",
+    "mainNav": "Navegação principal"
+  },
+  "locale": {
+    "switchTo": "Mudar idioma para {locale}",
+    "ptBR": "Português",
+    "en": "English"
+  },
+  "theme": {
+    "toggle": "Alternar tema claro/escuro",
+    "light": "Claro",
+    "dark": "Escuro"
+  },
+  "common": {
+    "search": "Buscar",
+    "loading": "Carregando...",
+    "error": "Ocorreu um erro",
+    "add": "Adicionar",
+    "remove": "Remover",
+    "download": "Baixar",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "close": "Fechar",
+    "back": "Voltar"
+  },
+  "home": {
+    "title": "EasyWinGet",
+    "subtitle": "Instale apps Windows de forma simples e acessível",
+    "searchPlaceholder": "Buscar aplicativos...",
+    "featured": "Destaques",
+    "categories": "Categorias",
+    "getStarted": "Começar",
+    "viewAll": "Ver todos",
+    "noFeatured": "Nenhum pacote em destaque no momento. Explore a loja para encontrar aplicativos."
+  },
+  "store": {
+    "title": "Loja",
+    "description": "Navegue pelo catálogo WinGet e encontre aplicativos para instalar.",
+    "searchPlaceholder": "Buscar por nome, editor ou descrição...",
+    "resultsCount": "{count, plural, =0 {Nenhum resultado} one {# resultado} other {# resultados}}",
+    "filters": {
+      "category": "Categoria",
+      "publisher": "Editor",
+      "allCategories": "Todas as categorias",
+      "allPublishers": "Todos os editores"
+    },
+    "pagination": {
+      "previous": "Anterior",
+      "next": "Próxima",
+      "pageOf": "Página {page} de {total}"
+    },
+    "empty": {
+      "title": "Nenhum aplicativo encontrado",
+      "description": "Tente outra busca ou remova os filtros para ver mais resultados.",
+      "clearFilters": "Limpar filtros"
+    }
+  },
+  "cart": {
+    "title": "Carrinho",
+    "navLabel": "Carrinho",
+    "badgeLabel": "Carrinho com {count, plural, one {# item} other {# itens}}",
+    "itemCount": "{count, plural, =0 {Nenhum item} one {# item selecionado} other {# itens selecionados}}",
+    "clearAll": "Limpar carrinho",
+    "continueShopping": "Continuar na loja",
+    "removeNamed": "Remover {name} do carrinho",
+    "empty": {
+      "description": "Seu carrinho está vazio. Adicione aplicativos na loja para gerar um script de instalação.",
+      "browseStore": "Ir para a loja"
+    }
+  },
+  "package": {
+    "description": "Descrição",
+    "version": "Versão",
+    "packageId": "Identificador WinGet",
+    "installerType": "Tipo de instalador",
+    "addToCartNamed": "Adicionar {name} ao carrinho",
+    "inCart": "No carrinho"
+  },
+  "bundles": {
+    "title": "Meus Bundles",
+    "description": "Salve e compartilhe listas de aplicativos favoritos.",
+    "authRequired": "Faça login para ver seus bundles e histórico.",
+    "myBundles": "Bundles salvos",
+    "saveFromCart": "Salvar carrinho como bundle",
+    "saveDialogTitle": "Salvar bundle",
+    "saveDialogDescription": "{count, plural, =0 {Nenhum item no carrinho} one {# item será salvo} other {# itens serão salvos}}",
+    "nameLabel": "Nome",
+    "namePlaceholder": "Ex.: Setup Dev",
+    "nameRequired": "Informe um nome para o bundle.",
+    "descriptionLabel": "Descrição (opcional)",
+    "descriptionPlaceholder": "Descreva para que serve este bundle...",
+    "publicLabel": "Público",
+    "publicDescription": "Permite compartilhar um link para outras pessoas verem este bundle.",
+    "publicBadge": "Bundle público",
+    "cartEmpty": "Adicione itens ao carrinho antes de salvar.",
+    "itemCount": "{count, plural, =0 {Nenhum item} one {# item} other {# itens}}",
+    "moreItems": "+{count} mais",
+    "empty": {
+      "title": "Nenhum bundle salvo",
+      "description": "Salve o carrinho como bundle ou adicione apps na loja.",
+      "browseStore": "Ir para a loja"
+    },
+    "emptyBundle": "Este bundle não tem aplicativos.",
+    "downloadHistory": "Histórico de downloads",
+    "historyEmpty": "Nenhum download registrado ainda.",
+    "historyPackages": "{count, plural, one {# pacote} other {# pacotes}}",
+    "unnamedDownload": "Download sem nome",
+    "copyLink": "Copiar link",
+    "linkCopied": "Link copiado",
+    "addAll": "Adicionar todos ({count})",
+    "addAllNamed": "Adicionar {count} aplicativos ao carrinho",
+    "favoriteNamed": "Favoritar {name}",
+    "unfavoriteNamed": "Remover {name} dos favoritos"
+  },
+  "pages": {
+    "store": {
+      "title": "Loja",
+      "description": "Navegue pelo catálogo WinGet e encontre aplicativos para instalar.",
+      "comingSoon": "Em breve: grid de pacotes, filtros e busca."
+    },
+    "cart": {
+      "title": "Carrinho",
+      "description": "Revise os aplicativos selecionados antes de gerar o script de instalação.",
+      "comingSoon": "Em breve: adicionar, remover e revisar pacotes."
+    },
+    "bundles": {
+      "title": "Meus Bundles",
+      "description": "Salve e compartilhe listas de aplicativos favoritos.",
+      "comingSoon": "Em breve: criar, editar e compartilhar bundles."
+    },
+    "help": {
+      "title": "Ajuda",
+      "description": "Guia para usar WinGet, PowerShell e evitar bloqueios de segurança.",
+      "comingSoon": "Em breve: instruções passo a passo e FAQ."
+    }
+  },
+  "footer": {
+    "navLabel": "Links do rodapé",
+    "about": "Sobre",
+    "privacy": "Privacidade",
+    "terms": "Termos",
+    "copyright": "© 2026 EasyWinGet"
+  },
+  "meta": {
+    "title": "EasyWinGet",
+    "description": "Loja WinGet simples e acessível"
+  },
+  "help": {
+    "metaTitle": "Ajuda — EasyWinGet",
+    "metaDescription": "Guia passo a passo para baixar scripts, desbloquear arquivos e instalar apps com WinGet.",
+    "title": "Central de Ajuda",
+    "subtitle": "Tudo o que você precisa para escolher apps, baixar o script de instalação e executá-lo com segurança no Windows.",
+    "tocLabel": "Índice da página de ajuda",
+    "tocHeading": "Ir direto para",
+    "externalLinkHint": " (abre em nova aba)",
+    "toc": {
+      "whatIs": "O que é",
+      "downloadRun": "Baixar e executar",
+      "motw": "Desbloquear arquivo",
+      "installWinget": "Instalar WinGet",
+      "notepad": "Alternativa Bloco de Notas",
+      "faq": "Perguntas frequentes"
+    },
+    "wizard": {
+      "title": "Como funciona em 3 passos",
+      "description": "Do catálogo até a instalação — o fluxo principal do EasyWinGet.",
+      "ariaLabel": "Passos do processo de instalação",
+      "step1": {
+        "number": "Passo 1",
+        "title": "Escolher",
+        "description": "Navegue na loja, busque apps e adicione ao carrinho os que deseja instalar."
+      },
+      "step2": {
+        "number": "Passo 2",
+        "title": "Revisar",
+        "description": "Confira a lista selecionada e escolha o modo Iniciante ou Avançado antes de gerar o script."
+      },
+      "step3": {
+        "number": "Passo 3",
+        "title": "Baixar",
+        "description": "Baixe o arquivo .ps1 e execute no PowerShell para instalar tudo de uma vez."
+      }
+    },
+    "mode": {
+      "title": "Modo Iniciante vs Avançado",
+      "description": "Escolha o nível de detalhe que faz sentido para você. O modo Iniciante é o padrão recomendado.",
+      "beginner": {
+        "badge": "Recomendado",
+        "title": "Modo Iniciante",
+        "description": "Linguagem simples, sem comandos técnicos expostos.",
+        "feature1": "Interface clara com botões grandes e textos diretos.",
+        "feature2": "O script é gerado automaticamente — você só baixa e executa.",
+        "feature3": "Ideal para quem nunca usou PowerShell ou WinGet."
+      },
+      "advanced": {
+        "badge": "Técnico",
+        "title": "Modo Avançado",
+        "description": "Mostra o conteúdo completo antes de baixar.",
+        "feature1": "Visualize o manifest JSON com os pacotes selecionados.",
+        "feature2": "Veja os comandos winget que serão executados.",
+        "feature3": "Útil para administradores de TI e usuários experientes."
+      }
+    },
+    "sections": {
+      "whatIs": {
+        "title": "1. O que é o EasyWinGet",
+        "description": "O EasyWinGet é uma loja web simples e acessível que usa o catálogo oficial do WinGet (Windows Package Manager) para instalar aplicativos no Windows 10 e 11.",
+        "point1": "Você escolhe apps visualmente, sem memorizar nomes de pacotes.",
+        "point2": "Geramos um script PowerShell (.ps1) que instala tudo automaticamente.",
+        "point3": "Gratuito, bilíngue (PT/EN) e pensado para quem não é especialista em TI."
+      },
+      "downloadRun": {
+        "title": "2. Como baixar e executar o script",
+        "intro": "Depois de montar seu carrinho na loja, siga estes passos para instalar os aplicativos:",
+        "step1": "Abra o carrinho e confira se todos os apps desejados estão listados.",
+        "step2": "Clique em baixar script para salvar o arquivo .ps1 no seu computador.",
+        "step3": "Abra o menu Iniciar, digite PowerShell e clique com o botão direito em Windows PowerShell.",
+        "step4": "Escolha Executar como administrador — necessário para instalar a maioria dos apps.",
+        "step5": "Digite cd Downloads (ou a pasta onde salvou o arquivo) e pressione Enter. Depois digite .\\nome-do-script.ps1 e pressione Enter."
+      },
+      "motw": {
+        "title": "3. Como desbloquear o arquivo baixado (Mark-of-the-Web)",
+        "intro": "O Windows marca arquivos baixados da internet com uma proteção chamada Mark-of-the-Web (MOTW). Isso pode impedir a execução do script. Siga estes passos para desbloquear:",
+        "step1": "Localize o arquivo .ps1 na pasta Downloads (ou onde você salvou).",
+        "step2": "Clique com o botão direito no arquivo e escolha Propriedades.",
+        "step3": "Na aba Geral, role até o final e marque a caixa Desbloquear.",
+        "step4": "Clique em Aplicar e depois em OK.",
+        "step5": "Execute o script novamente no PowerShell como administrador.",
+        "tip": "Dica: se preferir evitar o bloqueio, use a alternativa do Bloco de Notas descrita abaixo — arquivos salvos localmente não recebem a marca da web."
+      },
+      "installWinget": {
+        "title": "4. Como instalar o WinGet (App Installer)",
+        "description": "O WinGet vem com o App Installer da Microsoft. Se o comando winget não funcionar no PowerShell, instale ou atualize o App Installer:",
+        "step1": "Abra a Microsoft Store pelo link abaixo ou pesquise por App Installer.",
+        "step2": "Clique em Obter ou Atualizar e aguarde a instalação terminar.",
+        "storeLinkLabel": "Abrir App Installer na Microsoft Store",
+        "note": "Após instalar, feche e abra o PowerShell novamente. Digite winget --version para confirmar que está funcionando."
+      },
+      "notepad": {
+        "title": "5. Alternativa: copiar script no Bloco de Notas",
+        "intro": "Se o Windows bloquear o arquivo baixado, você pode criar o script manualmente e evitar o Mark-of-the-Web:",
+        "step1": "No carrinho, use o botão Copiar script para copiar o conteúdo.",
+        "step2": "Abra o Bloco de Notas (Notepad) pelo menu Iniciar.",
+        "step3": "Cole o conteúdo com Ctrl+V.",
+        "step4": "Vá em Arquivo → Salvar como, escolha a pasta desejada e salve como InstalarApps.ps1 (tipo: Todos os arquivos).",
+        "step5": "Execute o arquivo salvo no PowerShell como administrador — sem precisar desbloquear."
+      },
+      "faq": {
+        "title": "6. Perguntas frequentes",
+        "q1": "Preciso ser administrador do computador?",
+        "a1": "Sim, na maioria dos casos. Instalar aplicativos no Windows exige permissões de administrador. Execute o PowerShell como administrador antes de rodar o script.",
+        "q2": "O script é seguro?",
+        "a2": "O script só instala os pacotes que você escolheu na loja, usando o comando oficial winget da Microsoft. Você pode revisar o conteúdo no modo Avançado antes de baixar.",
+        "q3": "Funciona no Windows 10?",
+        "a3": "Sim, desde que o WinGet (App Installer) esteja instalado e atualizado. Windows 11 já inclui o WinGet; no Windows 10 pode ser necessário instalá-lo pela Microsoft Store.",
+        "q4": "E se um app falhar na instalação?",
+        "a4": "O script continua instalando os demais apps. Verifique sua conexão com a internet, se o app está disponível para sua região e se há espaço em disco. Você pode tentar instalar o app individualmente depois com winget install NomeDoPacote."
+      }
+    },
+    "cta": {
+      "title": "Pronto para começar?",
+      "description": "Explore a loja e monte sua lista de aplicativos.",
+      "button": "Ir para a loja"
+    }
+  },
+  "script": {
+    "downloadPs1": "Baixar script .ps1",
+    "copyScript": "Copiar script",
+    "previewScript": "Visualizar script",
+    "advancedMode": "Modo avançado (visualizar script)",
+    "generating": "Gerando script...",
+    "generateError": "Não foi possível gerar o script.",
+    "copySuccess": "Script copiado para a área de transferência.",
+    "previewTitle": "Pré-visualização do script",
+    "previewDescription": "Revise o manifest JSON e os comandos winget antes de executar.",
+    "previewDescriptionWithHash": "SHA-256: {hash}. Revise o manifest JSON e os comandos winget antes de executar."
+  }
+}
