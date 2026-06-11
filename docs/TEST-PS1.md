@@ -12,8 +12,8 @@ O script `scripts/validate-ps1-generator.mjs` chama `generateScript` com pacotes
 
 - `$EasyWinGetManifest` e JSON do manifesto com os IDs corretos
 - `Unblock-File` (desbloqueio MOTW)
-- Comando `winget install` via `$wingetArgs`
-- GUI `System.Windows.Forms`
+- Comando `winget install` via `Invoke-WingetWithProgress` (streaming com métricas)
+- GUI `System.Windows.Forms` com botão **Fechar** pós-conclusão, `$metricsLabel` e tratamento de pacotes já instalados
 - Strings de interface por locale
 - Launcher `.cmd` com marcadores dinâmicos e extração por índice (evita falso positivo no comando embutido)
 
@@ -44,11 +44,14 @@ Requer Windows 10/11 com **App Installer** (WinGet) instalado.
 
 ### 3. Verificar GUI e instalação
 
-- [ ] Janela WinForms abre com título **EasyWinGet — Instalador** (pt-BR) ou **EasyWinGet — Installer** (en)
+- [ ] Janela WinForms abre com título **EasyWinGet - Instalador** (pt-BR) ou **EasyWinGet - Installer** (en)
 - [ ] Lista mostra Git e 7-Zip com IDs `Git.Git` e `7zip.7zip`
-- [ ] **Instalar todos** → confirmação → barra de progresso avança
-- [ ] Pacotes instalam com sucesso (ou falha explícita com log)
-- [ ] **Ver log** mostra saída das instalações
+- [ ] **Instalar todos** → confirmação → barra de progresso avança; label de métricas mostra tamanho/velocidade ou tempo decorrido
+- [ ] Pacote já instalado aparece como **Já instalado** / **Already installed** (não como falha)
+- [ ] Pacotes novos instalam com sucesso (ou falha explícita com log)
+- [ ] Ao concluir: botão **Fechar** / **Close** (Enter também fecha); resumo `X concluído(s), Y falha(s)`
+- [ ] Acentos pt-BR legíveis (Segoe UI); sem caracteres corrompidos (█, Γ) na lista
+- [ ] **Ver log** mostra saída limpa das instalações
 
 ### 4. Política de execução (regressão)
 

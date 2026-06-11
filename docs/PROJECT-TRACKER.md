@@ -5,9 +5,9 @@
 > Plano: [`docs/superpowers/plans/2026-06-11-easywinget-mvp.md`](superpowers/plans/2026-06-11-easywinget-mvp.md)  
 > Histórico: [`docs/HISTORY.md`](HISTORY.md)
 
-**Última atualização:** 2026-06-11 (launcher .cmd corrigido)  
+**Última atualização:** 2026-06-11 (polish GUI instalador)  
 **Fase atual:** 6 — Ajuda, Deploy e Polish  
-**Progresso:** 48 / 48 tarefas
+**Progresso:** 49 / 49 tarefas
 
 > **Site no ar:** https://easywinget.vercel.app  
 > **Sync em andamento:** [GitHub Actions — Sync WinGet Catalog](https://github.com/rasantan/EasyWinGet/actions/workflows/sync-winget-catalog.yml) (full sync disparado 2026-06-11)  
@@ -109,7 +109,8 @@
 - [x] **6.4** Deploy Vercel + env vars
 - [x] **6.5** Conectar repo GitHub → Vercel (CI/CD)
 - [x] **6.6** Revisão acessibilidade (contraste, labels, teclado)
-- [~] **6.7** Smoke test end-to-end em produção _(site live: easywinget.vercel.app; após desativar CAPTCHA no Supabase)_
+- [x] **6.7** Smoke test end-to-end em produção _(site live: easywinget.vercel.app)_
+- [x] **6.8** Polish GUI instalador: Fechar, métricas download, encoding, já-instalado
 
 ---
 

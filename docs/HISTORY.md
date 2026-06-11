@@ -327,6 +327,24 @@
 
 ---
 
+## 2026-06-11 — Polish GUI instalador (.cmd)
+
+**Feito:**
+- Botão **Fechar** após conclusão (Enter também fecha); resumo `X concluído(s), Y falha(s)`
+- Métricas de download em tempo real (`$metricsLabel`): tamanho, velocidade ou tempo decorrido
+- `Invoke-WingetWithProgress`: streaming winget com filtro de barras/spinner corrompidos
+- Pacotes já instalados (`-1978335189`, `-1978335135`) → status **Já instalado**, não falha
+- UTF-8 `OutputEncoding` + fonte Segoe UI 9pt nos controles
+- `validate:ps1` e `TEST-PS1.md` atualizados
+
+**Decisões:**
+- Métricas best-effort via parsing da saída winget; fallback para segundos decorridos
+
+**Próximo:**
+- Deploy produção (push main → Vercel)
+
+---
+
 ## 2026-06-11 — Fix launcher .cmd (extração PS1)
 
 **Feito:**

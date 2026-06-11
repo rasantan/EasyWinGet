@@ -28,7 +28,38 @@ const ASSERTIONS = [
   {
     label: "winget install",
     test: (script) =>
-      script.includes("'install'") && script.includes("& winget @wingetArgs"),
+      script.includes("'install'") &&
+      script.includes("Invoke-WingetWithProgress"),
+  },
+  {
+    label: "Invoke-WingetWithProgress",
+    test: (script) => script.includes("function Invoke-WingetWithProgress"),
+  },
+  {
+    label: "Get-WingetInstallOutcome",
+    test: (script) =>
+      script.includes("function Get-WingetInstallOutcome") &&
+      script.includes("-1978335189") &&
+      script.includes("-1978335135"),
+  },
+  {
+    label: "close button string",
+    test: (script, locale) =>
+      locale === "pt-BR"
+        ? script.includes("close = 'Fechar'")
+        : script.includes("close = 'Close'"),
+  },
+  {
+    label: "metrics label",
+    test: (script) => script.includes("$metricsLabel"),
+  },
+  {
+    label: "UTF-8 OutputEncoding",
+    test: (script) => script.includes("[Console]::OutputEncoding"),
+  },
+  {
+    label: "Segoe UI font",
+    test: (script) => script.includes("Segoe UI"),
   },
   {
     label: "System.Windows.Forms",
