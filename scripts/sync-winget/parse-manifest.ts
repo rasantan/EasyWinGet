@@ -62,23 +62,15 @@ const TAG_CATEGORY_MAP: Record<string, string> = {
   communication: "social",
 };
 
-function slugifyTag(tag: string): string {
-  return tag
-    .replace(/([a-z])([A-Z])/g, "$1-$2")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
+// Maps a manifest tag to a curated category, or null when it isn't part of the
+// controlled vocabulary. We deliberately do NOT fall back to the tag itself —
+// otherwise every free-form tag would become a "category" and the store filter
+// would explode into thousands of one-off entries.
 function normalizeTag(tag: string): string | null {
   const spaced = tag.replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase().trim();
   const compact = spaced.replace(/[^a-z0-9]+/g, "");
 
-  if (TAG_CATEGORY_MAP[spaced]) return TAG_CATEGORY_MAP[spaced];
-  if (TAG_CATEGORY_MAP[compact]) return TAG_CATEGORY_MAP[compact];
-
-  const slug = slugifyTag(tag);
-  return slug || null;
+  return TAG_CATEGORY_MAP[spaced] ?? TAG_CATEGORY_MAP[compact] ?? null;
 }
 
 export function mapTagsToCategories(tags: unknown): string[] {
