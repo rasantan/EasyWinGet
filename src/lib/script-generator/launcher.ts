@@ -17,7 +17,7 @@ const EXTRACT_COMMAND = [
   "try{& $f}finally{Remove-Item $f -Force -ErrorAction SilentlyContinue}",
   "}catch{",
   "Add-Type -AssemblyName System.Windows.Forms",
-  "[void][System.Windows.Forms.MessageBox]::Show($_.Exception.Message,'EasyWinGet')",
+  "[void][System.Windows.Forms.MessageBox]::Show($_.Exception.Message,'WinStack')",
   "exit 1}",
 ].join(";");
 
@@ -29,7 +29,7 @@ export function generateCmdLauncher(ps1Script: string, hash: string): string {
   const ps = `"%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"`;
 
   return `@echo off
-REM EasyWinGet Installer | SHA-256: ${hash}
+REM WinStack Installer | SHA-256: ${hash}
 REM Double-click to install. Admin (UAC) and PowerShell policy are handled automatically.
 setlocal
 set "EWG_SELF=%~f0"
@@ -47,4 +47,4 @@ ${PS1_END}
 `;
 }
 
-export const LAUNCHER_FILENAME = "easywinget-install.cmd";
+export const LAUNCHER_FILENAME = "winstack-install.cmd";

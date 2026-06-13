@@ -5,9 +5,9 @@
 > Plano: [`docs/superpowers/plans/2026-06-11-easywinget-mvp.md`](superpowers/plans/2026-06-11-easywinget-mvp.md)  
 > Histórico: [`docs/HISTORY.md`](HISTORY.md)
 
-**Última atualização:** 2026-06-13 (Fase 9 concluída: catálogo populado com 13.249 pacotes, 0 erros; categorias corrigidas para vocabulário curado)  
-**Fase atual:** 9 — Catálogo WinGet: população oficial, schema, ícones e UI (planejada)  
-**Progresso:** 54 / 54 tarefas (Fase 9 pendente de execução)  
+**Última atualização:** 2026-06-13 (B.3 implementado: Descoberta de Catálogo & Redesign Editorial — 6 subagentes, lint+tsc+build limpos; pendências operacionais de Supabase/backfill)  
+**Fase atual:** B.3 — Descoberta de Catálogo & Redesign Editorial (implementado; pendências operacionais)  
+**Progresso:** 54 / 54 tarefas + B.3 implementado  
 
 ---
 
@@ -151,7 +151,7 @@
 
 - [x] **B.1** Overhaul UX/UI: Substituir página de carrinho por gaveta lateral (sidebar drawer "Meu Kit"), atualizar vocabulário e aplicar tema tecnológico indigo-violeta
 - [x] **B.2** Rebranding e Redesign UX/UI: Rebrand de EasyWinGet para WinStack, TerminalPreview interativo na Home, Assistente de Implantação de 3 passos na geração do script, estilo Glassmorphism e glow de categorias com OKLCH
-- [ ] **B.3** Descoberta de Catálogo & Redesign Editorial — spec aprovada ([`2026-06-13-catalog-discovery-editorial-redesign-design.md`](superpowers/specs/2026-06-13-catalog-discovery-editorial-redesign-design.md)): taxonomia ampla (~22 cats + classificador multi-sinal + backfill), filtros (multi-categoria, recentes, licença), design editorial/oliva (Fraunces, claro+escuro quente, sidebar de filtros), páginas Sobre/Privacidade/Termos/FAQ e reescrita de copy/i18n. Aguardando plano de implementação.
+- [x] **B.3** Descoberta de Catálogo & Redesign Editorial — implementado em 3 ondas/6 subagentes ([spec](superpowers/specs/2026-06-13-catalog-discovery-editorial-redesign-design.md)): taxonomia ampla (~22 cats + classificador multi-sinal + script `backfill:categories`), filtros (multi-categoria via `overlaps`, recentes, licença `license_group` + facetas), design editorial/oliva (Fraunces, claro+escuro quente, sidebar de filtros + chips), páginas Sobre/Privacidade/Termos/FAQ e i18n PT/EN consolidado. Lint+tsc+build limpos. **Operacional concluído (2026-06-13):** migration `007` aplicada no Supabase; backfill rodado (13.249 atualizados, **80,1%** com categoria, 0 erros; license_group: open-source 6704 / proprietary 5588 / unknown 957); repo do footer corrigido para `rasantan/EasyWinGet`; deploy de produção na Vercel: https://easywinget.vercel.app
 - [ ] _(exemplo: adicionar favicon e OG images)_
 
 ---

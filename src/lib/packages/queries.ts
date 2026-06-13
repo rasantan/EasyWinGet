@@ -7,12 +7,22 @@ import {
   persistPackageEnrichment,
 } from "./enrichment";
 import type {
+  FacetCount,
   Package,
+  PackageFacets,
   PackageFilters,
+  RecentRange,
   SearchPackagesResult,
 } from "./types";
 
 const PAGE_SIZE = 24;
+
+function recentRangeToIsoDate(range: RecentRange): string {
+  const now = new Date();
+  const monthsBack = range === "month" ? 1 : range === "quarter" ? 3 : 12;
+  now.setMonth(now.getMonth() - monthsBack);
+  return now.toISOString();
+}
 
 export async function searchPackages(
   query: string,
@@ -29,12 +39,26 @@ export async function searchPackages(
     });
   }
 
-  if (filters.category) {
-    q = q.contains("categories", [filters.category]);
+  if (filters.categories && filters.categories.length > 0) {
+    // "qualquer uma": pacote casa se tiver ao menos uma das categorias.
+    q = q.overlaps("categories", filters.categories);
   }
 
   if (filters.publisher) {
     q = q.eq("publisher", filters.publisher);
+  }
+
+  if (filters.licenseGroup) {
+    // Linhas antigas podem ter license_group NULL: tratamos NULL como "unknown".
+    if (filters.licenseGroup === "unknown") {
+      q = q.or("license_group.eq.unknown,license_group.is.null");
+    } else {
+      q = q.eq("license_group", filters.licenseGroup);
+    }
+  }
+
+  if (filters.recent) {
+    q = q.gte("release_date", recentRangeToIsoDate(filters.recent));
   }
 
   if (filters.installer_type) {
@@ -127,6 +151,34 @@ export async function getPublishers(): Promise<string[]> {
   }
 
   return (data ?? []).map((row: { publisher: string }) => row.publisher);
+}
+
+export async function getFacets(): Promise<PackageFacets> {
+  const supabase = await createClient();
+
+  const [categoryRes, licenseRes] = await Promise.all([
+    supabase.rpc("category_facets"),
+    supabase.rpc("license_group_facets"),
+  ]);
+
+  // Degrada graciosamente: se uma RPC falhar, devolve faceta vazia em vez de quebrar a página.
+  const categories: FacetCount[] = categoryRes.error
+    ? []
+    : ((categoryRes.data ?? []) as { category: string; count: number }[]).map(
+        (row) => ({ value: row.category, count: Number(row.count) }),
+      );
+
+  const licenseGroups: FacetCount[] = licenseRes.error
+    ? []
+    : ((licenseRes.data ?? []) as {
+        license_group: string | null;
+        count: number;
+      }[]).map((row) => ({
+        value: row.license_group ?? "unknown",
+        count: Number(row.count),
+      }));
+
+  return { categories, licenseGroups };
 }
 
 export async function getFeaturedPackages(limit = 6): Promise<Package[]> {

@@ -1,5 +1,6 @@
 "use client";
 
+import { Search } from "lucide-react";
 import { useCallback, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
@@ -54,24 +55,30 @@ export function SearchBar({
       <label htmlFor="store-search" className="sr-only">
         {tCommon("search")}
       </label>
-      <Input
-        id="store-search"
-        type="search"
-        defaultValue={defaultValue}
-        placeholder={placeholder ?? t("searchPlaceholder")}
-        className="min-h-11 w-full text-base"
-        onChange={(event) => {
-          const value = event.target.value;
+      <div className="relative">
+        <Search
+          className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+          aria-hidden="true"
+        />
+        <Input
+          id="store-search"
+          type="search"
+          defaultValue={defaultValue}
+          placeholder={placeholder ?? t("searchPlaceholder")}
+          className="min-h-11 w-full bg-card pl-10 text-base"
+          onChange={(event) => {
+            const value = event.target.value;
 
-          if (debounceRef.current) {
-            clearTimeout(debounceRef.current);
-          }
+            if (debounceRef.current) {
+              clearTimeout(debounceRef.current);
+            }
 
-          debounceRef.current = setTimeout(() => {
-            updateQuery(value);
-          }, 350);
-        }}
-      />
+            debounceRef.current = setTimeout(() => {
+              updateQuery(value);
+            }, 350);
+          }}
+        />
+      </div>
     </div>
   );
 }

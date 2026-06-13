@@ -599,3 +599,66 @@
 **Próximo:**
 - Revisão da spec pelo usuário e, em seguida, escrever o plano de implementação (writing-plans).
 
+---
+
+## 2026-06-13 — Fase 1 (Dados): classificador multi-sinal + license_group
+
+**Feito:**
+- Migration `supabase/migrations/007_catalog_discovery.sql`: coluna `license_group text` + índice `packages_license_group_idx`; RPCs `category_facets()` e `license_group_facets()` (contagem por categoria/grupo). Não recria o GIN de `categories` (já existe na 001).
+- Novo módulo compartilhado `scripts/sync-winget/classify.ts`: `classifyCategories()` (vocabulário controlado de 22 categorias, dicionário grande de keywords + tokens de moniker/nome + match por palavra na descrição + heurística de publisher; sem fallback "Outros") e `classifyLicenseGroup()` (SPDX/keywords → open-source/proprietary/unknown).
+- `parse-manifest.ts` e `fetch-manifest.ts` passam a usar `classify.ts` (removidos `TAG_CATEGORY_MAP`/`normalizeTag`/`mapTagsToCategories`); `ParsedPackage` ganhou `license_group`; License extraída do manifest.
+- Novo `scripts/backfill-categories.ts` (+ script npm `backfill:categories`): recomputa `categories` e `license_group` dos 13k em batches via service role, idempotente, com estatísticas de cobertura ao final. **Não executado** (sem credenciais garantidas aqui).
+
+**Decisões:**
+- `upsert-packages.ts` não precisou de mudança: `sanitizePackage` já repassa `license_group` (string sempre não-vazia) preservando os campos enriquecidos.
+
+**Próximo:**
+- Fase 2 (Filtros): queries `overlaps`/`license_group`/`release_date` e UI da sidebar (outro agente). Rodar a migration 007 e o backfill em produção.
+
+---
+
+## 2026-06-13 — Fase 5 (Conteúdo): páginas Sobre/Privacidade/Termos/FAQ + consolidação i18n
+
+**Feito:**
+- Criadas 4 páginas editoriais (Server Components, `generateMetadata` + `getTranslations`, layout `max-w-3xl`, títulos em serifa `--font-heading`, classes semânticas, CTA discreto): `about`, `privacy`, `terms`, `faq`.
+- `help/page.tsx`: FAQ migrado para a nova página `/faq`; FAQ Card substituído por aside com link "Ver FAQ" → `/faq`; resto da Ajuda mantido.
+- Consolidação do i18n em `messages/pt-BR.json` e `messages/en.json`:
+  - `home.*` (hero editorial, kits populares com `developer`/`creator`/`essentials`, subtítulos).
+  - `store.filters.*` (title, mobileButton, categoriesGroup, licenseGroup + opções, recentGroup + faixas) e novo `store.chips.*`.
+  - `footer.faq`, `footer.repo`.
+  - Namespaces novos `about`, `privacy`, `terms`, `faq` (copy real, voz calorosa 1ª pessoa, indie/open-source, bilíngue); `help.faqLink`.
+- Copy em 1ª pessoa "nós", enquadramento sem fins lucrativos; FAQ com 3 perguntas novas (grátis? conta? venda de dados?).
+
+**Decisões:**
+- CTA das páginas Sobre/Privacidade/Termos volta para `/store`; FAQ aponta para `/help`.
+- FAQ removido do namespace `help` (toc + `sections.faq`) para evitar duplicidade com o novo namespace `faq`.
+
+**Validação:**
+- Paridade PT/EN: 311 chaves em cada, 0 divergências.
+- `npm run lint` limpo; `npx tsc --noEmit` limpo.
+
+**Próximo:**
+- Header/Footer e demais páginas (outros agentes) já tratam o inglês solto restante; revisar visualmente as novas páginas com o design system aplicado.
+
+---
+
+## 2026-06-13 — Implementação completa (B.3): Descoberta de Catálogo & Redesign Editorial
+
+**Feito:**
+- Implementação da spec executada em **3 ondas / 6 subagentes paralelos** (propriedade de arquivos para evitar conflitos):
+  - **Onda 1:** Dados/Backend (migration 007, classificador multi-sinal, parser, backfill) · Design system (tokens editoriais oliva claro+escuro quente, Fraunces, remoção de glass/glow/gradiente).
+  - **Onda 2:** Filtros (multi-categoria via `overlaps`, licença, recente, facetas, sidebar fixa + drawer, chips ativos) · Componentes núcleo (package-card editorial, 22 ícones de categoria, header/footer com links reais, limpeza dos utilitários removidos no carrinho) · Home (hero editorial + "Kits populares", `CartBadge` preservado).
+  - **Onda 3:** Páginas Sobre/Privacidade/Termos/FAQ + consolidação total do i18n (paridade PT/EN 311 chaves).
+- **Verificação de integração (orquestrador):** `npm run lint` limpo, `npx tsc --noEmit` limpo, `npm run build` OK — 27 páginas geradas, incluindo as novas rotas em PT e EN.
+
+**Decisões:**
+- i18n centralizado numa única subagente (Onda 3) para voz coerente e zero conflito de JSON; demais subagentes reportaram chaves em vez de editar `messages`.
+
+**Pendências operacionais (fora do código, exigem ambiente/credenciais):**
+- Aplicar a migration `007_catalog_discovery.sql` no Supabase.
+- Rodar `npm run backfill:categories` (service role) para popular `categories`/`license_group` nos 13k existentes — até lá, categorias seguem as ~7 antigas e `license_group` fica `NULL` (tratado como `unknown`).
+- Trocar o placeholder de repositório no footer (`microsoft/winget-pkgs`) pelo repo real do WinStack.
+
+**Próximo:**
+- Revisão visual (QA) das páginas com o design editorial aplicado; aplicar migration + backfill quando houver acesso ao Supabase.
+

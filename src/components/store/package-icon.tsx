@@ -37,7 +37,7 @@ export function PackageIcon({
   return (
     <div
       className={cn(
-        "flex shrink-0 items-center justify-center overflow-hidden rounded-xl border border-zinc-500/10 bg-zinc-500/5 text-muted-foreground",
+        "flex shrink-0 items-center justify-center overflow-hidden rounded-md border bg-muted text-muted-foreground",
         SIZE_CLASSES[size],
         className,
       )}

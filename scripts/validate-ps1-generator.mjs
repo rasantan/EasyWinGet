@@ -32,8 +32,8 @@ const ASSERTIONS = [
       script.includes("Invoke-WingetWithProgress"),
   },
   {
-    label: "Invoke-WingetWithProgress",
-    test: (script) => script.includes("function Invoke-WingetWithProgress"),
+    label: "Start-Job winget",
+    test: (script) => script.includes("Start-Job") && script.includes("ewg-winget-"),
   },
   {
     label: "Get-WingetInstallOutcome",

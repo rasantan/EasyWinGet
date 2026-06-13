@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "sync:winget": "npm run start --prefix scripts/sync-winget",
-    "validate:ps1": "node --import ./scripts/sync-winget/node_modules/tsx/dist/loader.mjs scripts/validate-ps1-generator.mjs"
+    "validate:ps1": "node --import ./scripts/sync-winget/node_modules/tsx/dist/loader.mjs scripts/validate-ps1-generator.mjs",
+    "backfill:categories": "node --import ./scripts/sync-winget/node_modules/tsx/dist/loader.mjs scripts/backfill-categories.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",

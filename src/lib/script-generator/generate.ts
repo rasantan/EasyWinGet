@@ -47,15 +47,15 @@ function buildPowerShellBody(
   const escapedBundle = bundleLabel.replace(/"/g, '\\"');
 
   return `# ============================================================
-# EasyWinGet Install Script
-# Generated: ${generatedAt} | Bundle: "${escapedBundle}" | Locale: ${locale}
+# WinStack Install Script
+# Generated: ${generatedAt} | Stack: "${escapedBundle}" | Locale: ${locale}
 # Packages: ${packageCount} | SHA-256: ${HASH_PLACEHOLDER}
 # ============================================================
 # AUDIT: Complete package list below. No hidden operations.
 # Commands: winget install --id <id> -e --accept-source-agreements --accept-package-agreements
 # ============================================================
 
-$EasyWinGetManifest = @'
+$WinStackManifest = @'
 ${manifestJson}
 '@ | ConvertFrom-Json
 
@@ -121,90 +121,97 @@ function Invoke-WingetWithProgress {
   $progressPattern = '(\\d+(?:\\.\\d+)?)\\s*(KB|MB|GB|B)\\s*/\\s*(\\d+(?:\\.\\d+)?)\\s*(KB|MB|GB|B)'
   $spinnerPattern = '^\\s+[-/|\\\\]\\s+$'
   $logLines = New-Object System.Collections.Generic.List[string]
+  $tempLog = Join-Path $env:TEMP ('ewg-winget-' + [guid]::NewGuid().ToString('N') + '.log')
+  New-Item -Path $tempLog -ItemType File -Force | Out-Null
 
-  $argString = ($Arguments | ForEach-Object {
-    if ($_ -match '\\s') { ('"' + ($_ -replace '"', '\\"') + '"') } else { $_ }
-  }) -join ' '
+  $state = @{
+    LastRead = 0
+    TotalLabel = ''
+    SpeedLabel = '-'
+    FinalSizeLabel = ''
+    LastBytes = 0.0
+    LastTime = [DateTime]::UtcNow
+  }
+  $startTime = $state.LastTime
 
-  $psi = New-Object System.Diagnostics.ProcessStartInfo
-  $psi.FileName = 'winget'
-  $psi.Arguments = $argString
-  $psi.RedirectStandardOutput = $true
-  $psi.RedirectStandardError = $true
-  $psi.UseShellExecute = $false
-  $psi.CreateNoWindow = $true
-  $psi.StandardOutputEncoding = [Text.Encoding]::UTF8
-  $psi.StandardErrorEncoding = [Text.Encoding]::UTF8
-
-  $proc = New-Object System.Diagnostics.Process
-  $proc.StartInfo = $psi
-  $null = $proc.Start()
-
-  $lastBytes = 0.0
-  $lastTime = [DateTime]::UtcNow
-  $startTime = $lastTime
-  $currentLabel = ''
-  $totalLabel = ''
-  $speedLabel = '-'
-  $finalSizeLabel = ''
-
-  function Read-WingetStreamLine {
-    param([System.IO.StreamReader]$Reader)
-    if ($null -eq $Reader) { return $null }
-    try {
-      while ($Reader.Peek() -ne -1) {
-        $line = $Reader.ReadLine()
-        if ($null -eq $line) { return $null }
-        if ($line -match $spinnerPattern) { continue }
-        $cleanLine = ($line -replace '[^\\x20-\\x7E\\u00C0-\\u024F]', '').Trim()
-        if ([string]::IsNullOrWhiteSpace($cleanLine)) { continue }
-        [void]$logLines.Add($cleanLine)
-        if ($line -match $progressPattern) {
-          $curBytes = ConvertTo-ByteSize ([double]$Matches[1]) $Matches[2]
-          $totBytes = ConvertTo-ByteSize ([double]$Matches[3]) $Matches[4]
-          $now = [DateTime]::UtcNow
-          $elapsed = ($now - $lastTime).TotalSeconds
-          if ($elapsed -gt 0.1 -and $curBytes -gt $lastBytes) {
-            $speedLabel = (Format-ByteSize (($curBytes - $lastBytes) / $elapsed)) + '/s'
-            $lastBytes = $curBytes
-            $lastTime = $now
-          }
-          $currentLabel = Format-ByteSize $curBytes
-          $totalLabel = Format-ByteSize $totBytes
-          $finalSizeLabel = $totalLabel
-          $metricsLabel.Text = ($GuiStrings.downloadMetrics -f $currentLabel, $totalLabel, $speedLabel)
-          $listBox.Items[$ListIndex] = ("{0} - {1} (v{2}) [{3}] · {4}/{5}" -f $GuiStrings.installing, $PkgName, $PkgVersion, $PkgId, $currentLabel, $totalLabel)
-          [void][System.Windows.Forms.Application]::DoEvents()
-          [void]$form.Refresh()
-        }
-        return $line
+  function Update-WingetLine {
+    param([string]$Line)
+    if ($Line -match $spinnerPattern) { return }
+    $cleanLine = ($Line -replace '[^\\x20-\\x7E\\u00C0-\\u024F]', '').Trim()
+    if ([string]::IsNullOrWhiteSpace($cleanLine)) { return }
+    [void]$logLines.Add($cleanLine)
+    if ($Line -match $progressPattern) {
+      $curBytes = ConvertTo-ByteSize ([double]$Matches[1]) $Matches[2]
+      $totBytes = ConvertTo-ByteSize ([double]$Matches[3]) $Matches[4]
+      $now = [DateTime]::UtcNow
+      $elapsed = ($now - $state.LastTime).TotalSeconds
+      if ($elapsed -gt 0.1 -and $curBytes -gt $state.LastBytes) {
+        $state.SpeedLabel = (Format-ByteSize (($curBytes - $state.LastBytes) / $elapsed)) + '/s'
+        $state.LastBytes = $curBytes
+        $state.LastTime = $now
       }
+      $currentLabel = Format-ByteSize $curBytes
+      $state.TotalLabel = Format-ByteSize $totBytes
+      $state.FinalSizeLabel = $state.TotalLabel
+      $metricsLabel.Text = ($GuiStrings.downloadMetrics -f $currentLabel, $state.TotalLabel, $state.SpeedLabel)
+      $listBox.Items[$ListIndex] = ("{0} - {1} (v{2}) [{3}] · {4}/{5}" -f $GuiStrings.installing, $PkgName, $PkgVersion, $PkgId, $currentLabel, $state.TotalLabel)
     }
-    catch { }
-    return $null
   }
 
-  while (-not $proc.HasExited) {
-    $null = Read-WingetStreamLine $proc.StandardOutput
-    $null = Read-WingetStreamLine $proc.StandardError
-    [void][System.Windows.Forms.Application]::DoEvents()
-    Start-Sleep -Milliseconds 50
+  function Read-NewWingetLogLines {
+    if (-not (Test-Path -LiteralPath $tempLog)) { return }
+    $content = Get-Content -LiteralPath $tempLog -Encoding UTF8 -ErrorAction SilentlyContinue
+    if ($null -eq $content) { return }
+    if ($content -is [string]) { $content = @($content) }
+    for ($i = $state.LastRead; $i -lt $content.Count; $i++) {
+      Update-WingetLine $content[$i]
+    }
+    $state.LastRead = $content.Count
   }
 
-  while ($proc.StandardOutput.Peek() -ne -1) { $null = Read-WingetStreamLine $proc.StandardOutput }
-  while ($proc.StandardError.Peek() -ne -1) { $null = Read-WingetStreamLine $proc.StandardError }
+  $job = Start-Job -ArgumentList (,$Arguments), $tempLog -ScriptBlock {
+    param($WingetArgs, $LogPath)
+    try {
+      & winget @WingetArgs 2>&1 | ForEach-Object {
+        Add-Content -LiteralPath $LogPath -Value $_.ToString() -Encoding UTF8
+      }
+      return $LASTEXITCODE
+    }
+    catch {
+      Add-Content -LiteralPath $LogPath -Value $_.Exception.Message -Encoding UTF8
+      return 1
+    }
+  }
 
-  $exitCode = $proc.ExitCode
+  try {
+    while ($job.State -eq 'Running') {
+      Read-NewWingetLogLines
+      if ([string]::IsNullOrWhiteSpace($state.TotalLabel)) {
+        $elapsedSec = [int](([DateTime]::UtcNow - $startTime).TotalSeconds)
+        $metricsLabel.Text = ($GuiStrings.elapsedTime -f $elapsedSec)
+      }
+      [void][System.Windows.Forms.Application]::DoEvents()
+      Start-Sleep -Milliseconds 100
+    }
 
-  if ([string]::IsNullOrWhiteSpace($totalLabel)) {
+    $exitCode = Receive-Job -Job $job -ErrorAction SilentlyContinue
+    if ($null -eq $exitCode) { $exitCode = 1 }
+    Read-NewWingetLogLines
+  }
+  finally {
+    Remove-Job -Job $job -Force -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath $tempLog -Force -ErrorAction SilentlyContinue
+  }
+
+  if ([string]::IsNullOrWhiteSpace($state.TotalLabel)) {
     $elapsedSec = [int](([DateTime]::UtcNow - $startTime).TotalSeconds)
     $metricsLabel.Text = ($GuiStrings.elapsedTime -f $elapsedSec)
   }
 
   return @{
-    ExitCode = $exitCode
+    ExitCode = [int]$exitCode
     Output = ($logLines -join [Environment]::NewLine)
-    FinalSize = $finalSizeLabel
+    FinalSize = $state.FinalSizeLabel
   }
 }
 
@@ -229,7 +236,7 @@ $listBox.Location = New-Object System.Drawing.Point(12, 36)
 $listBox.Size = New-Object System.Drawing.Size(600, 248)
 $listBox.SelectionMode = [System.Windows.Forms.SelectionMode]::None
 $listBox.Font = $form.Font
-foreach ($pkg in $EasyWinGetManifest.packages) {
+foreach ($pkg in $WinStackManifest.packages) {
   [void]$listBox.Items.Add(("{0} - {1} (v{2}) [{3}]" -f $GuiStrings.pending, $pkg.name, $pkg.version, $pkg.id))
 }
 $form.Controls.Add($listBox)
@@ -294,7 +301,7 @@ $btnCancel.Add_Click({
 })
 
 $btnInstall.Add_Click({
-  $count = @($EasyWinGetManifest.packages).Count
+  $count = @($WinStackManifest.packages).Count
   $answer = [System.Windows.Forms.MessageBox]::Show(
     ($GuiStrings.confirm -f $count),
     $GuiStrings.title,
@@ -307,12 +314,12 @@ $btnInstall.Add_Click({
 
   $btnInstall.Enabled = $false
   $btnCancel.Enabled = $false
-  $total = @($EasyWinGetManifest.packages).Count
+  $total = @($WinStackManifest.packages).Count
   $index = 0
   $okCount = 0
   $failCount = 0
 
-  foreach ($pkg in $EasyWinGetManifest.packages) {
+  foreach ($pkg in $WinStackManifest.packages) {
     if ($script:Cancelled) {
       break
     }

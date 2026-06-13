@@ -20,7 +20,6 @@ const tocSections = [
   { id: "motw", key: "motw" },
   { id: "install-winget", key: "installWinget" },
   { id: "notepad", key: "notepad" },
-  { id: "faq", key: "faq" },
 ] as const;
 
 const whatIsPoints = ["point1", "point2", "point3"] as const;
@@ -28,7 +27,6 @@ const downloadRunSteps = ["step1", "step2", "step3", "step4", "step5"] as const;
 const motwSteps = ["step1", "step2", "step3", "step4", "step5"] as const;
 const installWingetSteps = ["step1", "step2"] as const;
 const notepadSteps = ["step1", "step2", "step3", "step4", "step5"] as const;
-const faqItems = ["q1", "q2", "q3", "q4"] as const;
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("help");
@@ -210,29 +208,23 @@ export default async function HelpPage() {
           </CardContent>
         </Card>
 
-        <Card id="faq" aria-labelledby="faq-heading">
-          <CardHeader>
-            <h2 id="faq-heading" className="text-2xl font-medium leading-snug">
-              {t("sections.faq.title")}
-            </h2>
-          </CardHeader>
-          <CardContent>
-            <dl className="space-y-6">
-              {faqItems.map((item) => (
-                <div key={item} className="space-y-2">
-                  <dt>
-                    <h3 className="text-lg font-semibold">
-                      {t(`sections.faq.${item}`)}
-                    </h3>
-                  </dt>
-                  <dd className="text-base leading-relaxed text-muted-foreground">
-                    {t(`sections.faq.a${item.slice(1)}`)}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </CardContent>
-        </Card>
+        <aside
+          aria-labelledby="help-faq-link-heading"
+          className="rounded-xl border bg-muted/40 p-6 text-center"
+        >
+          <h2 id="help-faq-link-heading" className="text-xl font-semibold">
+            {t("faqLink.title")}
+          </h2>
+          <p className="mt-2 text-base text-muted-foreground">
+            {t("faqLink.description")}
+          </p>
+          <Link
+            href="/faq"
+            className="mt-4 inline-flex min-h-11 items-center rounded-lg border px-6 text-base font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            {t("faqLink.button")}
+          </Link>
+        </aside>
 
         <aside
           aria-labelledby="help-cta-heading"

@@ -40,7 +40,30 @@
     "categories": "Categories",
     "getStarted": "Build Your Stack",
     "viewAll": "View all",
-    "noFeatured": "No featured packages right now. Browse the store to find apps."
+    "noFeatured": "No featured packages right now. Browse the store to find apps.",
+    "heroEyebrow": "Open-source Windows app store",
+    "heroHeadline": "Set up your Windows, your way.",
+    "heroDescription": "We curate the official WinGet catalog so you can discover great apps, gather them into a stack, and install everything in one go.",
+    "secondaryCta": "See how it works",
+    "kitsTitle": "Popular kits",
+    "kitsSubtitle": "Starting points we put together — handpicked apps grouped by what you're setting out to do.",
+    "kitIncludes": "Inside",
+    "exploreKit": "Explore kit",
+    "featuredSubtitle": "Apps the community reaches for most.",
+    "kits": {
+      "developer": {
+        "name": "Developer kit",
+        "description": "Editors, terminals, and runtimes to get you coding in minutes."
+      },
+      "creator": {
+        "name": "Content creator kit",
+        "description": "Tools for editing video, audio, and images — everything your craft needs."
+      },
+      "essentials": {
+        "name": "Essentials kit",
+        "description": "Browsers, productivity, and the everyday apps every fresh setup deserves."
+      }
+    }
   },
   "store": {
     "title": "App Catalog",
@@ -55,7 +78,25 @@
       "sortLabel": "Sort by",
       "sortRelevance": "Relevance",
       "sortName": "Name (A–Z)",
-      "sortRecent": "Most recent"
+      "sortRecent": "Most recent",
+      "title": "Filters",
+      "mobileButton": "Filters",
+      "categoriesGroup": "Categories",
+      "licenseGroup": "License",
+      "licenseAll": "All licenses",
+      "licenseOpenSource": "Open source",
+      "licenseProprietary": "Proprietary",
+      "licenseUnknown": "Unknown",
+      "recentGroup": "Updated",
+      "recentAny": "Any time",
+      "recentMonth": "Past month",
+      "recentQuarter": "Past 3 months",
+      "recentYear": "Past year"
+    },
+    "chips": {
+      "searchLabel": "Search: {query}",
+      "remove": "Remove {label}",
+      "clearAll": "Clear all"
     },
     "pagination": {
       "previous": "Previous",
@@ -156,6 +197,8 @@
     "about": "About",
     "privacy": "Privacy",
     "terms": "Terms",
+    "faq": "FAQ",
+    "repo": "Repository",
     "copyright": "© 2026 WinStack"
   },
   "meta": {
@@ -175,8 +218,7 @@
       "downloadRun": "Download and run",
       "motw": "Unblock file",
       "installWinget": "Install WinGet",
-      "notepad": "Notepad alternative",
-      "faq": "FAQ"
+      "notepad": "Notepad alternative"
     },
     "wizard": {
       "title": "How it works in 3 steps",
@@ -261,23 +303,137 @@
         "step3": "Paste the content with Ctrl+V.",
         "step4": "Go to File → Save As, pick a folder, and save as InstallApps.ps1 (type: All files).",
         "step5": "Run the saved file in PowerShell as administrator — no unblock step needed."
-      },
-      "faq": {
-        "title": "6. Frequently asked questions",
-        "q1": "Do I need to be a computer administrator?",
-        "a1": "In most cases, yes. The installer automatically requests administrator permission (UAC prompt) when you are not already elevated.",
-        "q2": "Is the script safe?",
-        "a2": "The script only installs packages you chose in the store, using Microsoft's official winget command. You can review the content in Advanced mode before downloading.",
-        "q3": "Does it work on Windows 10?",
-        "a3": "Yes, as long as WinGet (App Installer) is installed and up to date. Windows 11 includes WinGet by default; on Windows 10 you may need to install it from the Microsoft Store.",
-        "q4": "What if an app fails to install?",
-        "a4": "The script continues installing the remaining apps. Check your internet connection, whether the app is available in your region, and disk space. You can try installing the app individually later with winget install PackageName."
       }
+    },
+    "faqLink": {
+      "title": "Looking for quick answers?",
+      "description": "We've gathered the most common questions on a page of their own.",
+      "button": "See FAQ"
     },
     "cta": {
       "title": "Ready to build your environment?",
       "description": "Browse the app catalog and assemble your stack.",
       "button": "Browse Catalog"
+    }
+  },
+  "about": {
+    "metaTitle": "About — WinStack",
+    "metaDescription": "What WinStack is, why we built it, and how it helps you set up a fresh Windows from the official WinGet catalog.",
+    "title": "About WinStack",
+    "intro": "WinStack started from a simple wish: to make setting up a fresh Windows less tedious and a little more human. We're an indie, open-source project with no profit motive.",
+    "sections": {
+      "what": {
+        "title": "What it is",
+        "body": "WinStack is a web store that brings together the official WinGet catalog, Microsoft's package manager. Instead of hunting for installers all over the web, you find everything in one place, with a calm interface that's easy to browse."
+      },
+      "why": {
+        "title": "Why it exists",
+        "body": "We've all spent an afternoon reinstalling Windows, downloading program after program, site after site. We figured it could be better. WinStack exists so you can go from a blank machine to your favorite setup in a few clicks, without memorizing commands."
+      },
+      "how": {
+        "title": "How it works",
+        "body": "The idea is straightforward, in three steps:",
+        "step1": "Discover apps by browsing the catalog and our ready-made kits.",
+        "step2": "Build your stack by gathering everything you want to install.",
+        "step3": "Generate and download an install script that handles the rest, using WinGet under the hood."
+      },
+      "openSource": {
+        "title": "Open and non-profit",
+        "body": "WinStack is open-source and not-for-profit. We don't sell anything, we don't show ads, and the code is out in the open for anyone to read, audit, or contribute to. It's a project made by people who love software, for people who love software."
+      }
+    },
+    "cta": {
+      "title": "Ready to start?",
+      "description": "Browse the catalog and build your first stack.",
+      "button": "Browse the catalog"
+    }
+  },
+  "privacy": {
+    "metaTitle": "Privacy — WinStack",
+    "metaDescription": "How WinStack handles your data: anonymous authentication, what we store, and why there's no third-party tracking.",
+    "title": "Privacy",
+    "intro": "We'd rather be straight with you: WinStack collects as little as possible and never sells your data. Here's everything that happens to your information, in plain words.",
+    "sections": {
+      "anonymous": {
+        "title": "Anonymous authentication",
+        "body": "You don't need to create an account, give an email, or set a password. We create an automatic anonymous identity for you, just so your favorites and stacks stick around between visits. No personal data is required."
+      },
+      "stored": {
+        "title": "What we store",
+        "body": "Tied to your anonymous identity, we only keep:",
+        "item1": "The apps you've marked as favorites.",
+        "item2": "The stacks and bundles you've built and saved.",
+        "item3": "The history of install scripts you've generated."
+      },
+      "noTracking": {
+        "title": "No third-party tracking",
+        "body": "We don't use advertising trackers or social pixels, and we don't resell data. There are no ads on WinStack. What you do here stays here."
+      },
+      "catalog": {
+        "title": "Where the catalog comes from",
+        "body": "App information comes from the official, public WinGet catalog, maintained by the community and Microsoft. We simply organize and present that data to make your choices easier."
+      }
+    },
+    "cta": {
+      "title": "All set on privacy",
+      "description": "Whenever you like, head back and build your stack.",
+      "button": "Browse the catalog"
+    }
+  },
+  "terms": {
+    "metaTitle": "Terms of use — WinStack",
+    "metaDescription": "WinStack's terms of use: using the tool, no warranties, and your responsibility when running scripts.",
+    "title": "Terms of use",
+    "intro": "These terms explain, without unnecessary legalese, the rules for using WinStack. By using the tool, you agree to them.",
+    "sections": {
+      "use": {
+        "title": "Using the tool",
+        "body": "WinStack is offered free of charge to help you discover apps and generate install scripts via WinGet. You're free to use it for personal and professional purposes, as long as you do so legally and responsibly."
+      },
+      "asIs": {
+        "title": "No warranties",
+        "body": "WinStack is provided \"as is\", without warranties of any kind. We do our best to keep everything working, but we can't guarantee the service will always be available, error-free, or fit for a particular purpose."
+      },
+      "responsibility": {
+        "title": "Your responsibility",
+        "body": "The scripts you generate run on your own computer, with your own permissions. You're responsible for reviewing what you install and for running the scripts. We recommend checking the apps you've picked — advanced mode shows the commands before you download."
+      },
+      "thirdParty": {
+        "title": "Third-party apps",
+        "body": "The apps in the catalog are created and maintained by third parties and distributed under their own licenses and terms. WinStack doesn't develop these apps and isn't responsible for them; it only makes installing them from the WinGet catalog easier."
+      }
+    },
+    "cta": {
+      "title": "Ready to set up your PC?",
+      "description": "Head back to the catalog and build your stack whenever you like.",
+      "button": "Browse the catalog"
+    }
+  },
+  "faq": {
+    "metaTitle": "FAQ — WinStack",
+    "metaDescription": "Answers to the most common questions about WinStack: whether it's free, whether you need an account, script safety, and compatibility.",
+    "title": "Frequently asked questions",
+    "intro": "We've gathered the questions that come up most. If yours isn't here, take a look at the Help Center.",
+    "items": {
+      "q1": "Do I need to be a computer administrator?",
+      "a1": "In most cases, yes. The installer automatically requests administrator permission (UAC prompt) when you are not already elevated.",
+      "q2": "Is the script safe?",
+      "a2": "The script only installs packages you chose in the store, using Microsoft's official winget command. You can review the content in Advanced mode before downloading.",
+      "q3": "Does it work on Windows 10?",
+      "a3": "Yes, as long as WinGet (App Installer) is installed and up to date. Windows 11 includes WinGet by default; on Windows 10 you may need to install it from the Microsoft Store.",
+      "q4": "What if an app fails to install?",
+      "a4": "The script continues installing the remaining apps. Check your internet connection, whether the app is available in your region, and disk space. You can try installing the app individually later with winget install PackageName.",
+      "q5": "Is WinStack free?",
+      "a5": "Yes, completely. WinStack is an open-source, not-for-profit project — we charge nothing, have no paid tiers, and show no ads.",
+      "q6": "Do I need to create an account?",
+      "a6": "No. You use WinStack with an anonymous identity created automatically, with no email or password. It only exists to keep your favorites and stacks between visits.",
+      "q7": "Do you sell my data?",
+      "a7": "Never. We don't sell or share your data, and we don't use advertising trackers. We only keep what's needed for the tool to work — see the Privacy page."
+    },
+    "cta": {
+      "title": "Still have questions?",
+      "description": "The Help Center walks you through the full install process step by step.",
+      "button": "Go to Help"
     }
   },
   "script": {

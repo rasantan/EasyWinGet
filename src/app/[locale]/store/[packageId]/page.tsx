@@ -6,10 +6,8 @@ import { AddToCartButton } from "@/components/store/add-to-cart-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import {
-  formatCategoryLabel,
-  getCategoryIcon,
-} from "@/lib/packages/category-icon";
+import { PackageIcon } from "@/components/store/package-icon";
+import { formatCategoryLabel } from "@/lib/packages/category-icon";
 import { getPackageByPackageId } from "@/lib/packages/queries";
 
 type PackageDetailPageProps = {
@@ -31,7 +29,6 @@ export default async function PackageDetailPage({
   const t = await getTranslations("package");
   const tCommon = await getTranslations("common");
   const primaryCategory = pkg.categories[0] ?? "utilities";
-  const CategoryIcon = getCategoryIcon(primaryCategory);
 
   return (
     <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
@@ -47,12 +44,12 @@ export default async function PackageDetailPage({
 
       <article className="space-y-6">
         <header className="flex flex-col gap-4 sm:flex-row sm:items-start">
-          <div
-            className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-muted"
-            aria-hidden
-          >
-            <CategoryIcon className="size-8 text-muted-foreground" />
-          </div>
+          <PackageIcon
+            iconUrl={pkg.icon_url}
+            category={primaryCategory}
+            size="md"
+            className="bg-muted"
+          />
           <div className="min-w-0 flex-1 space-y-2">
             <h1 className="text-3xl font-bold tracking-tight">{pkg.name}</h1>
             <p className="text-lg text-muted-foreground">{pkg.publisher}</p>

@@ -1,6 +1,7 @@
 import { parse } from "yaml";
 
-import { mapTagsToCategories, type ParsedPackage } from "./parse-manifest.js";
+import { classifyCategories, classifyLicenseGroup } from "./classify.js";
+import { type ParsedPackage } from "./parse-manifest.js";
 
 const RAW_BASE = "https://raw.githubusercontent.com/microsoft/winget-pkgs/master";
 
@@ -44,21 +45,35 @@ export function parseLocaleManifest(
     ? data.Tags.filter((t): t is string => typeof t === "string")
     : [];
 
+  const name = asString(data.PackageName) ?? ctx.package_id;
+  const publisher = asString(data.Publisher) ?? "";
+  const description =
+    asString(data.ShortDescription) ?? asString(data.Description) ?? "";
+  const moniker = asString(data.Moniker);
+  const license = asString(data.License);
+
   return {
     package_id: ctx.package_id,
-    name: asString(data.PackageName) ?? ctx.package_id,
-    publisher: asString(data.Publisher) ?? "",
-    description: asString(data.ShortDescription) ?? asString(data.Description) ?? "",
+    name,
+    publisher,
+    description,
     description_full: asString(data.Description),
     version: ctx.version,
     installer_type: null,
-    categories: mapTagsToCategories(tags),
+    categories: classifyCategories({
+      tags,
+      name,
+      moniker,
+      description,
+      publisher,
+    }),
     tags,
-    moniker: asString(data.Moniker),
+    moniker,
     homepage: asString(data.PackageUrl),
     publisher_url: asString(data.PublisherUrl),
     publisher_support_url: asString(data.PublisherSupportUrl),
-    license: asString(data.License),
+    license,
+    license_group: classifyLicenseGroup(license),
     release_date: asString(data.ReleaseDate),
     last_synced_at: new Date().toISOString(),
   };

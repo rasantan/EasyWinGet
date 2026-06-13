@@ -27,11 +27,27 @@ export type PackageSummary = Pick<
 
 export type PackageSort = "relevance" | "name" | "recent";
 
+export type LicenseGroup = "open-source" | "proprietary" | "unknown";
+
+export type RecentRange = "month" | "quarter" | "year";
+
 export type PackageFilters = {
-  category?: string;
+  categories?: string[];
   publisher?: string;
+  licenseGroup?: LicenseGroup;
+  recent?: RecentRange;
   installer_type?: string;
   sort?: PackageSort;
+};
+
+export type FacetCount = {
+  value: string;
+  count: number;
+};
+
+export type PackageFacets = {
+  categories: FacetCount[];
+  licenseGroups: FacetCount[];
 };
 
 export type SearchPackagesResult = {
