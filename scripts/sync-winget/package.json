@@ -10,11 +10,10 @@
   "dependencies": {
     "@octokit/rest": "^21.1.1",
     "@supabase/supabase-js": "^2.108.1",
-    "adm-zip": "^0.5.16",
+    "fflate": "^0.8.3",
     "yaml": "^2.8.0"
   },
   "devDependencies": {
-    "@types/adm-zip": "^0.5.7",
     "@types/node": "^20.19.0",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"
