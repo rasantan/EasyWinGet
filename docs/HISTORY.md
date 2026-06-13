@@ -345,6 +345,19 @@
 
 ---
 
+## 2026-06-11 — Fix travamento GUI instalador (deadlock winget)
+
+**Feito:**
+- Causa: `Process.StandardOutput.ReadLine()` bloqueava a thread WinForms + deadlock stdout/stderr
+- Tentativa BackgroundWorker também falhou (DoWork não executava sem message pump adequado)
+- Solução: `Start-Job` + log temporário + polling com `DoEvents()` — UI responsiva, métricas em tempo real
+- Teste: `scripts/test-winget-worker.ps1` OK em ~1s; `.cmd` local em `scripts/easywinget-test-local.cmd`
+
+**Próximo:**
+- Testar GUI localmente com `scripts/easywinget-test-local.cmd` antes de push
+
+---
+
 ## 2026-06-11 — Fix launcher .cmd (extração PS1)
 
 **Feito:**
@@ -395,4 +408,143 @@
 - Commit `aff01e7`: launcher `.cmd`, toggle Add/Remover, fix encoding
 - Push `main` → GitHub (email noreply no committer)
 - Vercel production **Ready** (~42s) — https://easywinget.vercel.app
+
+---
+
+## 2026-06-11 — Integração do agente Antigravity e Alinhamento de Regras
+
+**Feito:**
+- Alinhamento de diretrizes e regras com o agente Antigravity (seguindo as especificações de `.cursor/rules/project-tracking.mdc`).
+- Leitura e mapeamento de `docs/PROJECT-TRACKER.md` e `docs/HISTORY.md` pelo novo agente.
+
+**Decisões:**
+- O agente Antigravity seguirá estritamente as regras de rastreamento do projeto (atualizar trackers, histórico e planos).
+
+**Próximo:**
+- Aguardar as instruções do usuário para novas tarefas no backlog ou novas fases.
+
+---
+
+## 2026-06-11 — Substituição de Carrinho por Lista Lateral ("Meu Kit") e Overhaul de UX/UI
+
+**Feito:**
+- Atualização das chaves de idioma em `pt-BR.json` e `en.json` (substituição de vocabulário comercial "carrinho" / "cart" por utilitário de sistema "Meu Kit" / "My Kit" e "Selecionado" / "Selected").
+- Extensão do estado Zustand em `cart-store.ts` para gerenciar a visibilidade da barra lateral de forma global (`isOpen`, `setOpen`) com persistência apenas nos itens selecionados.
+- Criação do componente `InstallListSidebar.tsx` utilizando a gaveta `Sheet` do shadcn/ui.
+- Integração da barra lateral no `header.tsx` e alteração da funcionalidade do botão de kit para abrir a barra lateral em qualquer página.
+- Refatoração da página `/cart` para redirecionar o usuário para a loja e abrir a barra lateral automaticamente.
+- Aplicação de tema de cores tecnológico e premium (indigo-violeta vibrante em OKLCH) no `globals.css` para os modos claro e escuro.
+- Polimento dos efeitos dinâmicos de hover e sombra nos componentes `PackageCard.tsx`.
+- Validação do projeto executando `npm run build` com sucesso.
+
+**Decisões:**
+- A barra lateral abre automaticamente após selecionar um aplicativo para dar feedback de ação imediato ao usuário.
+- O redirecionamento de `/cart` para `/store` mantém a compatibilidade caso o usuário acesse URLs legadas ou favoritadas, fornecendo a experiência correta sem quebrar a navegação.
+- O tema completamente cinza-neutro foi substituído por uma paleta vibrante de alta fidelidade com destaque na cor indigo.
+
+**Próximo:**
+- Receber feedback do usuário para possíveis novos ajustes estéticos ou funcionais.
+
+---
+
+## 2026-06-12 — Rebranding para WinStack e Redesign Estético UX/UI
+
+**Feito:**
+- **Rebranding de Marca:** Renomeado EasyWinGet para **WinStack** em todas as traduções (`messages/en.json` e `messages/pt-BR.json`), metadados (`layout.tsx`), header, footer e geradores de scripts.
+- **Powershell Terminal Simulator:** Desenvolvido um componente de simulação interativo (`TerminalPreview.tsx`) na Landing Page para ilustrar em tempo real o funcionamento do instalador do WinStack.
+- **Deployment Stepper Assistant:** Implementado um assistente passo a passo interativo de 3 fases (`ScriptActions.tsx`) ao baixar o instalador para orientar o usuário no processo de download, no desbloqueio contra SmartScreen (MOTW) no Windows Explorer, e na execução final.
+- **Design System OKLCH:** Atualizados tokens em `globals.css` com um tom escuro premium (midnight-indigo) de alta fidelidade e tons vibrantes de indigo no tema claro e escuro.
+- **Glassmorphism & Glow Effects:** Criados utilitários CSS `.glass-card` (desfoque de fundo e bordas translúcidas) e `.glow-hover` (translação e sombra brilhante colorida de acordo com a categoria do pacote selecionado: verde para produtividade, rosa para games, roxo para redes sociais, azul para navegadores).
+- **Validação de Build:** A build de produção foi gerada via `npm run build` com sucesso absoluto e correção de lints não utilizados.
+
+**Decisões:**
+- A nomenclatura mudou de "My Kit" (Meu Kit) para "My Stack" (Meu Stack) e "Bundles" para "Stacks" para dar uma identidade mais focada em desenvolvedores e administração de sistemas.
+- A simulação de terminal e o assistente de desbloqueio reduzem drasticamente a fricção de novos usuários com avisos de segurança do Windows SmartScreen.
+- Persistência de carrinho atualizada para a chave `winstack-cart`.
+
+**Próximo:**
+- Monitorar a conclusão do workflow incremental no repositório de produção e feedbacks do usuário.
+
+---
+
+## 2026-06-12 — Sidebar fixável e pipeline de enriquecimento de metadados
+
+**Feito:**
+- **Sidebar fixável (pin):** `cart-store` com `isPinned`, `autoOpen` e `badgePulse` persistidos; `MainLayoutWrapper` aplica `lg:mr-96` e renderiza `InstallListSidebarDocked` sem overlay em desktop.
+- **Gaveta responsiva:** abaixo de `1024px` a sidebar volta ao drawer (`InstallListSidebar`); com pin ativo em desktop, adicionar apps não abre modal.
+- **Toggle auto-open:** botão na sidebar; quando desativado, badge do header pulsa ao adicionar app.
+- **Pipeline lazy de metadados:** `enrichment.ts` consulta Wikipedia REST API e fallback Google Favicon; `getPackageByPackageId` hidrata na leitura e persiste via service role (`admin.ts`).
+- **Ícones reais:** `PackageIcon` em `PackageCard` e página de detalhe; strings i18n `pin`, `unpin`, `autoOpen`.
+- **Build:** `npm run build` passou.
+
+**Decisões:**
+- `SUPABASE_SERVICE_ROLE_KEY` adicionada ao `.env.example` para cache de metadados no servidor (não expor no cliente).
+- Conteúdo da sidebar extraído em `install-list-sidebar-content.tsx` compartilhado entre drawer e docked.
+
+**Próximo:**
+- Teste manual: pin sidebar na loja + hidratação em `/store/Google.Chrome`.
+
+---
+
+## 2026-06-13 — Brainstorming + Plano: população do catálogo WinGet (index.db), schema, ícones e UI
+
+**Feito:**
+- Diagnóstico: o full sync atual clona o repo inteiro `microsoft/winget-pkgs` (timeout no GitHub Action) e o parser lê o *version manifest* (sem metadados), gerando pacotes vazios; ícones via fallback frequentemente não-oficiais.
+- Escolhida abordagem da **fonte pré-indexada oficial** (`source2.msix` → `Public/index.db` SQLite) rodando **localmente**, gravando no Supabase de produção (que a Vercel lê).
+- Escopo expandido (a pedido): descrições **oficiais** (deep-fetch incremental do `.locale`), mudança de schema e overhaul da UI da loja.
+- Spec aprovado: `docs/superpowers/specs/2026-06-13-winget-catalog-population-design.md`
+- Plano de implementação (16 tasks, 2 fases, TDD): `docs/superpowers/plans/2026-06-13-winget-catalog-population.md`
+- Tracker: adicionada **Fase 9** (9.1–9.16, pendentes).
+
+**Decisões:**
+- Híbrido: `index.db` dá a lista completa (id+versão); deep-fetch do manifest `.locale` só para pacotes novos/alterados (incremental por versão).
+- Caminho do manifest derivado pela convenção do winget-pkgs (id+versão), mais robusto que `pathparts`.
+- Schema `005`: `homepage`, `publisher_url`, `publisher_support_url`, `license`, `release_date`, `tags[]`, `popularity`, `is_featured`.
+- `popularity` derivada do `download_history` interno + favoritos (sem fonte oficial no WinGet).
+- Ícones: resolver domínio oficial (homepage/publisher_url) → cadeia de favicon validada → Wikipedia/genérico.
+- Upsert sanitiza payload para não sobrescrever `icon_url`/`description_full` enriquecidos com null.
+
+**Próximo:**
+- Executar a Fase 9 (começar por 9.1). Opções: subagent-driven ou inline (executing-plans).
+
+---
+
+## 2026-06-12 — Configuração SUPABASE_SERVICE_ROLE_KEY (local + Vercel)
+
+**Feito:**
+- `SUPABASE_SERVICE_ROLE_KEY` adicionada ao `.env.local`.
+- Vercel: variável configurada em **Production** e **Development** (criptografada em production).
+- Script reutilizável `scripts/configure-service-role-env.mjs` para repetir a configuração.
+- Redeploy de produção na Vercel para carregar a nova variável.
+- Verificação: service role consegue ler `packages` no Supabase.
+
+**Decisões:**
+- Preview na Vercel exige configuração manual no dashboard (limitação do CLI com branch único `main`).
+- Chave obtida via Supabase Management API (não commitada).
+
+**Próximo:**
+- Adicionar `SUPABASE_SERVICE_ROLE_KEY` em Preview no dashboard Vercel, se usar preview deployments.
+
+---
+
+## 2026-06-13 — Fase 9: implementação do catálogo WinGet (hybrid sync, schema, ícones, UI)
+
+**Feito:**
+- Implementadas as 16 tarefas da Fase 9 via execução em ondas com subagentes paralelos (arquivos disjuntos por onda), com commits sequenciais coordenados pelo agente principal.
+- Pipeline de sync híbrido em `scripts/sync-winget/`:
+  - `download-source.ts` (baixa `source2.msix` da CDN com fallback), `extract-index.ts` (extrai `Public/index.db` via `adm-zip`), `read-index.ts` (lê `index.db` com `node:sqlite`, maior versão por `package_id`, checagem defensiva de tabelas).
+  - `version-compare.ts`, `parse-manifest.ts`/`fetch-manifest.ts` (deep-fetch e parse dos manifests oficiais `.locale` para metadados ricos), `select-entries.ts` (diff incremental por versão com limite opcional), `upsert-packages.ts` (sanitização para não sobrescrever campos enriquecidos com null/vazio).
+  - `index.ts` orquestra: download → extract → read index → diff vs. versões existentes → deep-fetch concorrente → upsert → `recalc_package_popularity`; suporta `--limit` e `SYNC_EXPORT_JSON`.
+- Migrations: `005_packages_metadata.sql` (colunas de metadados/popularidade + função `recalc_package_popularity`) e `006_catalog_facets.sql` (RPCs `distinct_categories`/`distinct_publishers`).
+- Ícones: `icon-sources.ts` + enrichment com resolução por domínio oficial e cadeia de fallback validada por content-type.
+- UI da loja: ordenação (`relevance`/`name`/`recent`) nas queries e seletor na UI; ícones com `loading=lazy`/`decoding=async`/`referrerPolicy=no-referrer`; filtros via RPC distinct.
+- GitHub Action reescrito para fonte leve (Node 24).
+- Verificação: 15/15 testes do sync verdes; `next build` OK.
+
+**Decisões:**
+- Trocado `better-sqlite3` por `node:sqlite` (built-in do Node 24) por falta de toolchain C++/prebuilt no ambiente; Action alinhada para Node 24.
+- Commits seletivos por onda para isolar o trabalho da Fase 9 das alterações prévias não relacionadas na working tree.
+
+**Próximo:**
+- Aplicar migrations `005` e `006` no Supabase de produção e rodar o sync (primeiro com `--limit` para validar, depois full). Requer envs de produção carregadas.
 

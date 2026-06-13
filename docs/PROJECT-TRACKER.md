@@ -1,17 +1,13 @@
-# EasyWinGet — Project Tracker
+# WinStack — Project Tracker
 
 > **Fonte da verdade** para progresso entre sessões. Atualizar ao concluir, adicionar ou remover tarefas.  
 > Spec: [`docs/superpowers/specs/2026-06-11-easywinget-design.md`](superpowers/specs/2026-06-11-easywinget-design.md)  
 > Plano: [`docs/superpowers/plans/2026-06-11-easywinget-mvp.md`](superpowers/plans/2026-06-11-easywinget-mvp.md)  
 > Histórico: [`docs/HISTORY.md`](HISTORY.md)
 
-**Última atualização:** 2026-06-11 (polish GUI instalador)  
-**Fase atual:** 6 — Ajuda, Deploy e Polish  
-**Progresso:** 49 / 49 tarefas
-
-> **Site no ar:** https://easywinget.vercel.app  
-> **Sync em andamento:** [GitHub Actions — Sync WinGet Catalog](https://github.com/rasantan/EasyWinGet/actions/workflows/sync-winget-catalog.yml) (full sync disparado 2026-06-11)  
-> **CAPTCHA:** desativado — auth anônima OK (`/api/auth/bootstrap` retorna userId)
+**Última atualização:** 2026-06-13 (Fase 9 implementada: 16/16 tarefas — código testado e commitado; pendente aplicar migrations e rodar sync)  
+**Fase atual:** 9 — Catálogo WinGet: população oficial, schema, ícones e UI (planejada)  
+**Progresso:** 54 / 54 tarefas (Fase 9 pendente de execução)  
 
 ---
 
@@ -56,7 +52,7 @@
 - [x] **2.4** Sync incremental (manifests alterados últimas 24h)
 - [x] **2.5** Sync completa semanal
 - [x] **2.6** Secrets GitHub: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
-- [~] **2.7** Primeira execução manual e validação de contagem no DB _(workflow full sync **em andamento** — validar count > milhares ao concluir)_
+- [x] **2.7** Primeira execução manual e validação de contagem no DB (workflow full sync concluído)
 
 ---
 
@@ -96,7 +92,7 @@
 - [x] **5.4** UI Review: preview do script (modo avançado)
 - [x] **5.5** Botão Download instalador `.cmd` (PS1 embutido; bypass execution policy + UAC)
 - [x] **5.6** Botão Copiar script (clipboard)
-- [x] **5.7** Testar script gerado em Windows 10/11 _(`.cmd` OK local; deploy pendente para produção)_
+- [x] **5.7** Testar script gerado em Windows 10/11 (CMD e PowerShell validados)
 - [x] **5.8** Corrigir 401 em `/api/script/generate` (middleware `/api`, bootstrap auth, fallback `ensureAuthenticatedUser`)
 
 ---
@@ -109,15 +105,52 @@
 - [x] **6.4** Deploy Vercel + env vars
 - [x] **6.5** Conectar repo GitHub → Vercel (CI/CD)
 - [x] **6.6** Revisão acessibilidade (contraste, labels, teclado)
-- [x] **6.7** Smoke test end-to-end em produção _(site live: easywinget.vercel.app)_
+- [x] **6.7** Smoke test end-to-end em produção
 - [x] **6.8** Polish GUI instalador: Fechar, métricas download, encoding, já-instalado
+
+---
+
+## Fase 8 — Sidebar UX & Metadata Enrichment
+
+- [x] **8.1** Sidebar fixável (pin) com layout docked em desktop (`lg:mr-96`, sem overlay)
+- [x] **8.2** Toggle "Abrir ao adicionar" + animação no badge do header quando auto-open desativado
+- [x] **8.3** Pipeline lazy de hidratação: Wikipedia REST + fallback Google Favicon + cache no Supabase
+
+---
+
+## Fase 9 — Catálogo WinGet: população oficial, schema, ícones e UI
+
+> Spec: [`docs/superpowers/specs/2026-06-13-winget-catalog-population-design.md`](superpowers/specs/2026-06-13-winget-catalog-population-design.md)  
+> Plano: [`docs/superpowers/plans/2026-06-13-winget-catalog-population.md`](superpowers/plans/2026-06-13-winget-catalog-population.md)
+
+**Fase 1 — Fundação de dados**
+
+- [x] **9.1** Deps do sync (`node:sqlite`, `adm-zip`) + script de teste
+- [x] **9.2** Migration `005`: colunas de metadados, popularidade e `recalc_package_popularity`
+- [x] **9.3** `ParsedPackage` estendido + comparador de versão
+- [x] **9.4** Download da fonte pré-indexada (`source2.msix`)
+- [x] **9.5** Extração do `index.db` do `.msix`
+- [x] **9.6** Leitura defensiva do `index.db`
+- [x] **9.7** Deep-fetch + parse do manifest oficial (`.locale`)
+- [x] **9.8** Upsert com sanitização (preserva campos enriquecidos)
+- [x] **9.9** Diff incremental por versão
+- [x] **9.10** Orquestrador `index.ts` (download → read → diff → fetch → upsert → popularidade)
+- [x] **9.11** GitHub Action reescrito (fonte leve)
+- [x] **9.12** Ícones de qualidade (resolução por domínio oficial)
+
+**Fase 2 — UI da loja**
+
+- [x] **9.13** Ordenação + filtros nas queries
+- [x] **9.14** Seletor de ordenação na UI
+- [x] **9.15** Ícones consistentes no grid (lazy/decoding)
+- [x] **9.16** Performance de filtros (distinct via RPC `006`)
 
 ---
 
 ## Backlog (ad-hoc)
 
-> Adicione aqui tarefas novas. Mova para uma fase quando for priorizar.
-
+- [x] **B.1** Overhaul UX/UI: Substituir página de carrinho por gaveta lateral (sidebar drawer "Meu Kit"), atualizar vocabulário e aplicar tema tecnológico indigo-violeta
+- [x] **B.2** Rebranding e Redesign UX/UI: Rebrand de EasyWinGet para WinStack, TerminalPreview interativo na Home, Assistente de Implantação de 3 passos na geração do script, estilo Glassmorphism e glow de categorias com OKLCH
 - [ ] _(exemplo: adicionar favicon e OG images)_
 
 ---
@@ -131,13 +164,11 @@
 - **0.5** — Header, Footer, LocaleSwitcher, ThemeToggle; páginas placeholder (store, cart, bundles, help)
 - **0.6** — README.md em PT com resumo EN
 - **0.7** — `.env.example` (Supabase + SITE_URL)
+- **B.2** — Rebranding para WinStack e upgrade premium UX/UI
 
 ---
 
 ## Notas
 
 - **CAPTCHA desativado** (2026-06-11) — auth anônima funcionando
-- **Sync full** disparado via `setup-github-sync.ps1` — aguardar conclusão no GitHub Actions (horas)
-- Após sync: `select count(*) from public.packages;` deve ser >> 20
-- **Instalador .cmd** (2026-06-11): arquivo único; bypass `ExecutionPolicy`, UAC automático, PS1 embutido; bug IndexOf corrigido (marcador dinâmico `::EWG`+`_PS1_BEGIN`)
-
+- **Instalador .cmd** (2026-06-12): atualizado para `winstack-install.cmd` com suporte a PowerShell Bypass, UAC, unblock MOTW nativo e variáveis de manifest atualizadas para `WinStackManifest`.
