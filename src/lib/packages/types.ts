@@ -8,8 +8,16 @@ export type Package = {
   version: string;
   installer_type: string | null;
   categories: string[];
+  tags: string[];
   icon_url: string | null;
   moniker: string | null;
+  homepage: string | null;
+  publisher_url: string | null;
+  publisher_support_url: string | null;
+  license: string | null;
+  release_date: string | null;
+  popularity: number;
+  is_featured: boolean;
 };
 
 export type PackageSummary = Pick<
