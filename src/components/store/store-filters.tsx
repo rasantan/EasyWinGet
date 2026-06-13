@@ -26,8 +26,12 @@ export function StoreFilters({ categories, publishers }: StoreFiltersProps) {
 
   const currentCategory = searchParams.get("category") ?? "";
   const currentPublisher = searchParams.get("publisher") ?? "";
+  const currentSort = searchParams.get("sort") ?? "relevance";
 
-  const updateFilter = (key: "category" | "publisher", value: string | null) => {
+  const updateFilter = (
+    key: "category" | "publisher" | "sort",
+    value: string | null,
+  ) => {
     const params = new URLSearchParams(searchParams.toString());
 
     if (value) {
@@ -90,6 +94,25 @@ export function StoreFilters({ categories, publishers }: StoreFiltersProps) {
           ))}
         </SelectContent>
       </Select>
+      </div>
+
+      <div className="flex w-full flex-col gap-1.5 sm:w-48">
+        <label htmlFor="store-filter-sort" className="text-sm font-medium">
+          {t("filters.sortLabel")}
+        </label>
+        <Select
+          value={currentSort}
+          onValueChange={(value) => updateFilter("sort", value === "relevance" ? null : value)}
+        >
+          <SelectTrigger id="store-filter-sort" className="min-h-11 w-full">
+            <SelectValue placeholder={t("filters.sortLabel")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="relevance">{t("filters.sortRelevance")}</SelectItem>
+            <SelectItem value="name">{t("filters.sortName")}</SelectItem>
+            <SelectItem value="recent">{t("filters.sortRecent")}</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

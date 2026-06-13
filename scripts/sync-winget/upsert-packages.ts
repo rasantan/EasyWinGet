@@ -9,6 +9,18 @@ export type UpsertStats = {
   errors: number;
 };
 
+export function sanitizePackage(
+  pkg: Record<string, unknown>,
+): Record<string, unknown> {
+  const clean: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(pkg)) {
+    if (value === null || value === undefined) continue;
+    if (typeof value === "string" && value.trim() === "") continue;
+    clean[key] = value;
+  }
+  return clean;
+}
+
 export async function upsertPackages(
   packages: ParsedPackage[],
 ): Promise<UpsertStats> {
@@ -29,7 +41,9 @@ export async function upsertPackages(
   let errors = 0;
 
   for (let offset = 0; offset < packages.length; offset += BATCH_SIZE) {
-    const batch = packages.slice(offset, offset + BATCH_SIZE);
+    const batch = packages
+      .slice(offset, offset + BATCH_SIZE)
+      .map((pkg) => sanitizePackage(pkg as unknown as Record<string, unknown>));
     const batchNumber = Math.floor(offset / BATCH_SIZE) + 1;
 
     const { error } = await supabase

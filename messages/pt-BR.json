@@ -1,13 +1,13 @@
 {
   "nav": {
     "home": "Início",
-    "store": "Loja",
-    "cart": "Carrinho",
-    "bundles": "Bundles",
+    "store": "Catálogo",
+    "cart": "Meu Stack",
+    "bundles": "Stacks",
     "help": "Ajuda"
   },
   "header": {
-    "logoLabel": "EasyWinGet — Ir para início",
+    "logoLabel": "WinStack — Ir para início",
     "mainNav": "Navegação principal"
   },
   "locale": {
@@ -33,25 +33,29 @@
     "back": "Voltar"
   },
   "home": {
-    "title": "EasyWinGet",
-    "subtitle": "Instale apps Windows de forma simples e acessível",
+    "title": "WinStack",
+    "subtitle": "Descubra, monte e implante aplicativos Windows de forma simples",
     "searchPlaceholder": "Buscar aplicativos...",
-    "featured": "Destaques",
+    "featured": "Aplicativos em Destaque",
     "categories": "Categorias",
-    "getStarted": "Começar",
+    "getStarted": "Montar Meu Stack",
     "viewAll": "Ver todos",
     "noFeatured": "Nenhum pacote em destaque no momento. Explore a loja para encontrar aplicativos."
   },
   "store": {
-    "title": "Loja",
-    "description": "Navegue pelo catálogo WinGet e encontre aplicativos para instalar.",
+    "title": "Catálogo de Apps",
+    "description": "Navegue pelo repositório oficial do WinGet para montar seu stack de software personalizado.",
     "searchPlaceholder": "Buscar por nome, editor ou descrição...",
-    "resultsCount": "{count, plural, =0 {Nenhum resultado} one {# resultado} other {# resultados}}",
+    "resultsCount": "{count, plural, =0 {Nenhum aplicativo encontrado} one {# aplicativo encontrado} other {# aplicativos encontrados}}",
     "filters": {
       "category": "Categoria",
       "publisher": "Editor",
       "allCategories": "Todas as categorias",
-      "allPublishers": "Todos os editores"
+      "allPublishers": "Todos os editores",
+      "sortLabel": "Ordenar por",
+      "sortRelevance": "Relevância",
+      "sortName": "Nome (A–Z)",
+      "sortRecent": "Mais recentes"
     },
     "pagination": {
       "previous": "Anterior",
@@ -65,81 +69,84 @@
     }
   },
   "cart": {
-    "title": "Carrinho",
-    "navLabel": "Carrinho",
-    "badgeLabel": "Carrinho com {count, plural, one {# item} other {# itens}}",
-    "itemCount": "{count, plural, =0 {Nenhum item} one {# item selecionado} other {# itens selecionados}}",
-    "clearAll": "Limpar carrinho",
-    "continueShopping": "Continuar na loja",
-    "removeNamed": "Remover {name} do carrinho",
+    "title": "Meu Stack",
+    "navLabel": "Meu Stack",
+    "badgeLabel": "Stack com {count, plural, one {# app} other {# apps}}",
+    "itemCount": "{count, plural, =0 {Nenhum app selecionado} one {# app selecionado} other {# apps selecionados}}",
+    "pin": "Fixar barra",
+    "unpin": "Desafixar",
+    "autoOpen": "Abrir ao adicionar",
+    "clearAll": "Limpar Lista",
+    "continueShopping": "Adicionar mais apps",
+    "removeNamed": "Remover {name} do stack",
     "empty": {
-      "description": "Seu carrinho está vazio. Adicione aplicativos na loja para gerar um script de instalação.",
-      "browseStore": "Ir para a loja"
+      "description": "Seu stack está vazio. Escolha aplicativos no catálogo para gerar seu instalador personalizado.",
+      "browseStore": "Explorar Catálogo"
     }
   },
   "package": {
     "description": "Descrição",
     "version": "Versão",
-    "packageId": "Identificador WinGet",
+    "packageId": "ID do WinGet",
     "installerType": "Tipo de instalador",
-    "addToCartNamed": "Adicionar {name} ao carrinho",
-    "removeFromCartNamed": "Remover {name} do carrinho",
-    "inCart": "No carrinho"
+    "addToCartNamed": "Adicionar {name} ao stack",
+    "removeFromCartNamed": "Remover {name} do stack",
+    "inCart": "Adicionado ao Stack"
   },
   "bundles": {
-    "title": "Meus Bundles",
-    "description": "Salve e compartilhe listas de aplicativos favoritos.",
-    "authRequired": "Faça login para ver seus bundles e histórico.",
-    "myBundles": "Bundles salvos",
-    "saveFromCart": "Salvar carrinho como bundle",
-    "saveDialogTitle": "Salvar bundle",
-    "saveDialogDescription": "{count, plural, =0 {Nenhum item no carrinho} one {# item será salvo} other {# itens serão salvos}}",
-    "nameLabel": "Nome",
-    "namePlaceholder": "Ex.: Setup Dev",
-    "nameRequired": "Informe um nome para o bundle.",
+    "title": "Stacks Salvos",
+    "description": "Salve e compartilhe suas configurações de aplicativos favoritas.",
+    "authRequired": "Faça login para ver seus stacks e histórico de downloads.",
+    "myBundles": "Meus Stacks",
+    "saveFromCart": "Salvar stack",
+    "saveDialogTitle": "Salvar Configuração de Stack",
+    "saveDialogDescription": "{count, plural, =0 {Nenhum item no stack} one {# item será salvo} other {# itens serão salvos}}",
+    "nameLabel": "Nome do Stack",
+    "namePlaceholder": "Ex.: Workstation Dev, Essenciais Gamer",
+    "nameRequired": "Informe um nome para o stack.",
     "descriptionLabel": "Descrição (opcional)",
-    "descriptionPlaceholder": "Descreva para que serve este bundle...",
-    "publicLabel": "Público",
-    "publicDescription": "Permite compartilhar um link para outras pessoas verem este bundle.",
-    "publicBadge": "Bundle público",
-    "cartEmpty": "Adicione itens ao carrinho antes de salvar.",
+    "descriptionPlaceholder": "Descreva para que serve este stack...",
+    "publicLabel": "Stack Público",
+    "publicDescription": "Permite compartilhar um link para que outras pessoas instalem este stack.",
+    "publicBadge": "Stack público",
+    "cartEmpty": "Adicione itens ao seu stack antes de salvar.",
     "itemCount": "{count, plural, =0 {Nenhum item} one {# item} other {# itens}}",
     "moreItems": "+{count} mais",
     "empty": {
-      "title": "Nenhum bundle salvo",
-      "description": "Salve o carrinho como bundle ou adicione apps na loja.",
-      "browseStore": "Ir para a loja"
+      "title": "Nenhum stack salvo",
+      "description": "Salve seu stack como bundle ou adicione apps no catálogo.",
+      "browseStore": "Explorar Catálogo"
     },
-    "emptyBundle": "Este bundle não tem aplicativos.",
-    "downloadHistory": "Histórico de downloads",
+    "emptyBundle": "Este stack não tem aplicativos.",
+    "downloadHistory": "Histórico de Downloads",
     "historyEmpty": "Nenhum download registrado ainda.",
     "historyPackages": "{count, plural, one {# pacote} other {# pacotes}}",
     "unnamedDownload": "Download sem nome",
     "copyLink": "Copiar link",
     "linkCopied": "Link copiado",
     "addAll": "Adicionar todos ({count})",
-    "addAllNamed": "Adicionar {count} aplicativos ao carrinho",
+    "addAllNamed": "Adicionar {count} aplicativos ao meu stack",
     "favoriteNamed": "Favoritar {name}",
     "unfavoriteNamed": "Remover {name} dos favoritos"
   },
   "pages": {
     "store": {
-      "title": "Loja",
+      "title": "Catálogo",
       "description": "Navegue pelo catálogo WinGet e encontre aplicativos para instalar.",
       "comingSoon": "Em breve: grid de pacotes, filtros e busca."
     },
     "cart": {
-      "title": "Carrinho",
+      "title": "Meu Stack",
       "description": "Revise os aplicativos selecionados antes de gerar o script de instalação.",
       "comingSoon": "Em breve: adicionar, remover e revisar pacotes."
     },
     "bundles": {
-      "title": "Meus Bundles",
+      "title": "Stacks",
       "description": "Salve e compartilhe listas de aplicativos favoritos.",
-      "comingSoon": "Em breve: criar, editar e compartilhar bundles."
+      "comingSoon": "Em breve: criar, editar e compartilhar stacks."
     },
     "help": {
-      "title": "Ajuda",
+      "title": "Central de Ajuda",
       "description": "Guia para usar WinGet, PowerShell e evitar bloqueios de segurança.",
       "comingSoon": "Em breve: instruções passo a passo e FAQ."
     }
@@ -149,14 +156,14 @@
     "about": "Sobre",
     "privacy": "Privacidade",
     "terms": "Termos",
-    "copyright": "© 2026 EasyWinGet"
+    "copyright": "© 2026 WinStack"
   },
   "meta": {
-    "title": "EasyWinGet",
-    "description": "Loja WinGet simples e acessível"
+    "title": "WinStack — Orquestrador de Apps Windows",
+    "description": "Crie stacks personalizados de aplicativos e instale-os automaticamente usando o gerenciador oficial WinGet."
   },
   "help": {
-    "metaTitle": "Ajuda — EasyWinGet",
+    "metaTitle": "Ajuda — WinStack",
     "metaDescription": "Guia passo a passo para baixar scripts, desbloquear arquivos e instalar apps com WinGet.",
     "title": "Central de Ajuda",
     "subtitle": "Tudo o que você precisa para escolher apps, baixar o script de instalação e executá-lo com segurança no Windows.",
@@ -173,22 +180,22 @@
     },
     "wizard": {
       "title": "Como funciona em 3 passos",
-      "description": "Do catálogo até a instalação — o fluxo principal do EasyWinGet.",
+      "description": "Do catálogo até a implantação automatizada.",
       "ariaLabel": "Passos do processo de instalação",
       "step1": {
         "number": "Passo 1",
-        "title": "Escolher",
-        "description": "Navegue na loja, busque apps e adicione ao carrinho os que deseja instalar."
+        "title": "Selecionar",
+        "description": "Navegue no catálogo, busque apps e adicione-os ao seu stack."
       },
       "step2": {
         "number": "Passo 2",
         "title": "Revisar",
-        "description": "Confira a lista selecionada e escolha o modo Iniciante ou Avançado antes de gerar o script."
+        "description": "Confira a lista do seu stack, escolha opções de configuração e gere o script."
       },
       "step3": {
         "number": "Passo 3",
-        "title": "Baixar",
-        "description": "Baixe o instalador (.cmd) e dê dois cliques para instalar tudo de uma vez."
+        "title": "Implantar",
+        "description": "Baixe o instalador WinStack e dê dois cliques para instalar tudo de forma automatizada."
       }
     },
     "mode": {
@@ -213,27 +220,27 @@
     },
     "sections": {
       "whatIs": {
-        "title": "1. O que é o EasyWinGet",
-        "description": "O EasyWinGet é uma loja web simples e acessível que usa o catálogo oficial do WinGet (Windows Package Manager) para instalar aplicativos no Windows 10 e 11.",
+        "title": "1. O que é o WinStack",
+        "description": "O WinStack é uma loja web simples e acessível que usa o catálogo oficial do WinGet (Windows Package Manager) para instalar aplicativos no Windows 10 e 11.",
         "point1": "Você escolhe apps visualmente, sem memorizar nomes de pacotes.",
-        "point2": "Geramos um instalador (.cmd) que abre uma janela gráfica e instala tudo automaticamente — sem configurar PowerShell.",
-        "point3": "Gratuito, bilíngue (PT/EN) e pensado para quem não é especialista em TI."
+        "point2": "Geramos um instalador nativo WinStack (.cmd) que abre uma tela de progresso limpa e instala tudo de forma automatizada — sem configurar PowerShell.",
+        "point3": "Gratuito, bilíngue (PT/EN) e pensado para setups rápidos de ambiente."
       },
       "downloadRun": {
         "title": "2. Como baixar e executar o instalador",
-        "intro": "Depois de montar seu carrinho na loja, siga estes passos para instalar os aplicativos:",
-        "step1": "Abra o carrinho e confira se todos os apps desejados estão listados.",
-        "step2": "Clique em baixar instalador para salvar o arquivo easywinget-install.cmd no seu computador.",
-        "step3": "Abra a pasta Downloads (ou onde salvou o arquivo) e dê dois cliques em easywinget-install.cmd.",
-        "step4": "Se o Windows pedir permissão de administrador (UAC), clique em Sim — necessário para instalar a maioria dos apps.",
-        "step5": "Aguarde a janela do EasyWinGet abrir, confira a lista e clique em Instalar todos."
+        "intro": "Depois de montar seu stack no catálogo, siga estes passos para instalar os aplicativos:",
+        "step1": "Abra a barra lateral do seu stack e confira se todos os apps desejados estão listados.",
+        "step2": "Clique em baixar instalador para salvar o arquivo winstack-install.cmd no seu computador.",
+        "step3": "Abra a pasta Downloads e dê dois cliques em winstack-install.cmd.",
+        "step4": "Se o Windows pedir permissão de administrador (UAC), clique em Sim — necessário para instalar software.",
+        "step5": "Aguarde a janela de terminal do instalador WinStack abrir e concluir a instalação de tudo automaticamente."
       },
       "motw": {
         "title": "3. Política de execução do PowerShell (não se aplica ao .cmd)",
         "intro": "O instalador .cmd contorna automaticamente a política de execução do PowerShell. Se você copiar o script .ps1 manualmente (modo Avançado), pode ver o erro \"script is not digitally signed\".",
-        "step1": "Prefira sempre o arquivo easywinget-install.cmd baixado pelo site — basta dar dois cliques.",
+        "step1": "Prefira sempre o arquivo winstack-install.cmd baixado pelo site — basta dar dois cliques.",
         "step2": "O .cmd pede permissão de administrador quando necessário e executa o PowerShell com bypass de política.",
-        "step3": "Se ainda usar o .ps1 diretamente, abra o PowerShell e rode: powershell -ExecutionPolicy Bypass -File .\\easywinget-install.ps1",
+        "step3": "Se ainda usar o .ps1 diretamente, abra o PowerShell e rode: powershell -ExecutionPolicy Bypass -File .\\winstack-install.ps1",
         "step4": "Alternativa permanente (opcional): Set-ExecutionPolicy RemoteSigned -Scope CurrentUser",
         "step5": "Para scripts baixados da internet, o Windows também pode aplicar Mark-of-the-Web — veja a seção abaixo.",
         "tip": "Dica: o instalador .cmd já inclui desbloqueio automático (MOTW) do script embutido."
@@ -249,7 +256,7 @@
       "notepad": {
         "title": "5. Alternativa: copiar script no Bloco de Notas",
         "intro": "Se o Windows bloquear o arquivo baixado, você pode criar o script manualmente e evitar o Mark-of-the-Web:",
-        "step1": "No carrinho, use o botão Copiar script para copiar o conteúdo.",
+        "step1": "Na lista lateral, use o botão Copiar script para copiar o conteúdo.",
         "step2": "Abra o Bloco de Notas (Notepad) pelo menu Iniciar.",
         "step3": "Cole o conteúdo com Ctrl+V.",
         "step4": "Vá em Arquivo → Salvar como, escolha a pasta desejada e salve como InstalarApps.ps1 (tipo: Todos os arquivos).",
@@ -258,9 +265,9 @@
       "faq": {
         "title": "6. Perguntas frequentes",
         "q1": "Preciso ser administrador do computador?",
-        "a1": "Na maioria dos casos, sim. O instalador .cmd pede permissão de administrador automaticamente (janela UAC) quando você ainda não está elevado.",
+        "a1": "Na maioria dos casos, sim. O instalador pede permissão de administrador automaticamente (janela UAC) quando você ainda não está elevado.",
         "q2": "O script é seguro?",
-        "a2": "O script só instala os pacotes que você escolheu na loja, usando o comando oficial winget da Microsoft. Você pode revisar o conteúdo no modo Avançado antes de baixar.",
+        "a2": "O script só instala os pacotes que você escolheu no catálogo, usando o comando oficial winget da Microsoft. Você pode revisar o conteúdo no modo Avançado antes de baixar.",
         "q3": "Funciona no Windows 10?",
         "a3": "Sim, desde que o WinGet (App Installer) esteja instalado e atualizado. Windows 11 já inclui o WinGet; no Windows 10 pode ser necessário instalá-lo pela Microsoft Store.",
         "q4": "E se um app falhar na instalação?",
@@ -268,20 +275,20 @@
       }
     },
     "cta": {
-      "title": "Pronto para começar?",
-      "description": "Explore a loja e monte sua lista de aplicativos.",
-      "button": "Ir para a loja"
+      "title": "Pronto para configurar seu ambiente?",
+      "description": "Explore o catálogo de aplicativos e monte seu stack personalizado.",
+      "button": "Explorar Catálogo"
     }
   },
   "script": {
-    "downloadInstaller": "Baixar instalador (.cmd)",
-    "copyScript": "Copiar script",
-    "previewScript": "Visualizar script",
-    "advancedMode": "Modo avançado (visualizar script)",
-    "generating": "Gerando script...",
-    "generateError": "Não foi possível gerar o script.",
-    "copySuccess": "Script copiado para a área de transferência.",
-    "previewTitle": "Pré-visualização do script",
+    "downloadInstaller": "Baixar Instalador (.cmd)",
+    "copyScript": "Copiar Script",
+    "previewScript": "Visualizar Script",
+    "advancedMode": "Modo desenvolvedor (configurações avançadas do script)",
+    "generating": "Construindo stack...",
+    "generateError": "Não foi possível construir o instalador do stack.",
+    "copySuccess": "Script PowerShell copiado para a área de transferência.",
+    "previewTitle": "Pré-visualização do Stack",
     "previewDescription": "Revise o manifest JSON e os comandos winget antes de executar.",
     "previewDescriptionWithHash": "SHA-256: {hash}. Revise o manifest JSON e os comandos winget antes de executar."
   }

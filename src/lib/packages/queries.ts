@@ -106,42 +106,27 @@ export async function getPackageByPackageId(
 export async function getCategories(): Promise<string[]> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase.from("packages").select("categories");
+  const { data, error } = await supabase.rpc("distinct_categories");
 
   if (error) {
     throw new Error(`getCategories failed: ${error.message}`);
   }
 
-  const categories = new Set<string>();
-  for (const row of data ?? []) {
-    for (const category of row.categories ?? []) {
-      categories.add(category);
-    }
-  }
-
-  return [...categories].sort();
+  return (data ?? []).map((row: { category: string }) => row.category);
 }
 
 export async function getPublishers(): Promise<string[]> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
-    .from("packages")
-    .select("publisher")
-    .order("publisher");
+  const { data, error } = await supabase.rpc("distinct_publishers", {
+    max_rows: 500,
+  });
 
   if (error) {
     throw new Error(`getPublishers failed: ${error.message}`);
   }
 
-  const publishers = new Set<string>();
-  for (const row of data ?? []) {
-    if (row.publisher) {
-      publishers.add(row.publisher);
-    }
-  }
-
-  return [...publishers].sort();
+  return (data ?? []).map((row: { publisher: string }) => row.publisher);
 }
 
 export async function getFeaturedPackages(limit = 6): Promise<Package[]> {

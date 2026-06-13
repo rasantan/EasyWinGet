@@ -12,12 +12,14 @@ import {
   getPublishers,
   searchPackages,
 } from "@/lib/packages/queries";
+import type { PackageSort } from "@/lib/packages/types";
 
 type StorePageProps = {
   searchParams: Promise<{
     q?: string;
     category?: string;
     publisher?: string;
+    sort?: string;
     page?: string;
   }>;
 };
@@ -28,6 +30,7 @@ function StorePagination({
   query,
   category,
   publisher,
+  sort,
   labels,
 }: {
   page: number;
@@ -35,6 +38,7 @@ function StorePagination({
   query: string;
   category?: string;
   publisher?: string;
+  sort?: string;
   labels: { previous: string; next: string; pageOf: string };
 }) {
   if (totalPages <= 1) {
@@ -46,6 +50,7 @@ function StorePagination({
     if (query) params.set("q", query);
     if (category) params.set("category", category);
     if (publisher) params.set("publisher", publisher);
+    if (sort) params.set("sort", sort);
     if (targetPage > 1) params.set("page", String(targetPage));
     const qs = params.toString();
     return qs ? `/store?${qs}` : "/store";
@@ -88,12 +93,13 @@ export default async function StorePage({ searchParams }: StorePageProps) {
   const query = params.q ?? "";
   const category = params.category;
   const publisher = params.publisher;
+  const sort = params.sort as PackageSort | undefined;
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
 
   const t = await getTranslations("store");
 
   const [result, categories, publishers] = await Promise.all([
-    searchPackages(query, { category, publisher }, page),
+    searchPackages(query, { category, publisher, sort }, page),
     getCategories(),
     getPublishers(),
   ]);
@@ -101,10 +107,13 @@ export default async function StorePage({ searchParams }: StorePageProps) {
   const { data: packages, count, totalPages } = result;
 
   return (
-    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
-      <header className="mb-6 space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-muted-foreground">{t("description")}</p>
+    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 sm:py-10 relative">
+      {/* Decorative top ambient glow */}
+      <div className="absolute top-0 left-1/4 size-72 rounded-full bg-primary/5 blur-3xl -z-10 pointer-events-none" />
+
+      <header className="mb-8 space-y-2 border-b border-border/40 pb-5">
+        <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">{t("title")}</h1>
+        <p className="text-base text-muted-foreground max-w-2xl">{t("description")}</p>
       </header>
 
       <div className="mb-6 space-y-4">
@@ -150,6 +159,7 @@ export default async function StorePage({ searchParams }: StorePageProps) {
               query={query}
               category={category}
               publisher={publisher}
+              sort={sort}
               labels={{
                 previous: t("pagination.previous"),
                 next: t("pagination.next"),
