@@ -568,3 +568,15 @@
 - Rodar o sync completo (`npm run start`, sem `--limit`) para popular os ~13k pacotes restantes.
 - Conferir a UI da loja com o catálogo cheio (ordenação, filtros via RPC, ícones).
 
+---
+
+## 2026-06-13 — Sync completo (~13k) e correção de categorias
+
+**Feito:**
+- Sync completo executado (`npm run start`): 13.253 na fonte, 12.948 upserted, 0 erros, ~7,7 min. Catálogo final: **13.249 pacotes** (license 13.248, homepage 11.584, descrição 6.463, tags 9.677).
+- Bug de categorias corrigido: `normalizeTag` deixava de mapear e usava a própria tag slugificada como categoria, gerando ~14k "categorias" e quebrando o filtro da loja. Agora só emite categoria do vocabulário curado (developer-tools, productivity, utilities, multimedia, games, browsers, social).
+- Dados existentes recomputados in-place a partir das `tags` armazenadas (sem re-baixar manifests). Resultado: 7 categorias limpas (multimedia 511, browsers 507, developer-tools 447, games 330, utilities 256, productivity 212, social 137).
+
+**Próximo:**
+- Conferir a UI da loja com o catálogo cheio (ordenação, filtros, ícones) e ajustar a taxonomia de categorias se quiser cobertura maior.
+

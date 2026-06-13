@@ -5,7 +5,7 @@
 > Plano: [`docs/superpowers/plans/2026-06-11-easywinget-mvp.md`](superpowers/plans/2026-06-11-easywinget-mvp.md)  
 > Histórico: [`docs/HISTORY.md`](HISTORY.md)
 
-**Última atualização:** 2026-06-13 (Fase 9: 16/16 tarefas + migrations 005/006 aplicadas + sync validado com --limit 300, 0 erros; pendente sync completo ~13k)  
+**Última atualização:** 2026-06-13 (Fase 9 concluída: catálogo populado com 13.249 pacotes, 0 erros; categorias corrigidas para vocabulário curado)  
 **Fase atual:** 9 — Catálogo WinGet: população oficial, schema, ícones e UI (planejada)  
 **Progresso:** 54 / 54 tarefas (Fase 9 pendente de execução)  
 
