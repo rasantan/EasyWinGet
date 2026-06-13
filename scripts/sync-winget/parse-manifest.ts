@@ -11,7 +11,13 @@ export type ParsedPackage = {
   version: string;
   installer_type: string | null;
   categories: string[];
+  tags: string[];
   moniker: string | null;
+  homepage: string | null;
+  publisher_url: string | null;
+  publisher_support_url: string | null;
+  license: string | null;
+  release_date: string | null;
   last_synced_at: string;
 };
 
