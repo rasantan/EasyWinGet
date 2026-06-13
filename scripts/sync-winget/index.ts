@@ -1,229 +1,128 @@
-import { readdirSync, statSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { Octokit } from "@octokit/rest";
+import { createClient } from "@supabase/supabase-js";
 
-import {
-  isMainManifest,
-  parseManifestContent,
-  parseManifestFile,
-  resolveMainManifestPath,
-  type ParsedPackage,
-} from "./parse-manifest.js";
+import { downloadSourceMsix } from "./download-source.js";
+import { extractIndexDb } from "./extract-index.js";
+import { fetchManifestsConcurrently } from "./fetch-manifest.js";
+import { readIndex } from "./read-index.js";
+import { selectEntriesToFetch } from "./select-entries.js";
 import { upsertPackages } from "./upsert-packages.js";
 
-const WINGET_OWNER = "microsoft";
-const WINGET_REPO = "winget-pkgs";
-const MANIFESTS_PREFIX = "manifests/";
-
-function isFullSync(): boolean {
-  if (process.argv.includes("--full")) return true;
-  const env = process.env.FULL_SYNC?.toLowerCase();
-  return env === "true" || env === "1";
-}
-
-function getMaxPackages(): number | undefined {
-  const raw = process.env.FULL_SYNC_MAX_PACKAGES;
-  if (!raw) return undefined;
-  const parsed = Number.parseInt(raw, 10);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
-}
-
-function walkManifestFiles(dir: string): string[] {
-  const results: string[] = [];
-
-  function walk(current: string): void {
-    for (const entry of readdirSync(current)) {
-      const fullPath = join(current, entry);
-      const stats = statSync(fullPath);
-
-      if (stats.isDirectory()) {
-        walk(fullPath);
-        continue;
-      }
-
-      if (isMainManifest(fullPath)) {
-        results.push(fullPath);
-      }
-    }
+function getLimit(): number | undefined {
+  const flagIndex = process.argv.indexOf("--limit");
+  if (flagIndex >= 0 && process.argv[flagIndex + 1]) {
+    const parsed = Number.parseInt(process.argv[flagIndex + 1], 10);
+    if (Number.isFinite(parsed) && parsed > 0) return parsed;
   }
-
-  walk(dir);
-  return results;
+  return undefined;
 }
 
-async function fetchFileContent(
-  octokit: Octokit,
-  path: string,
-): Promise<string | null> {
-  try {
-    const { data } = await octokit.repos.getContent({
-      owner: WINGET_OWNER,
-      repo: WINGET_REPO,
-      path,
-    });
+function requireEnv(): { url: string; key: string } {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) {
+    throw new Error(
+      "SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY sao obrigatorias (apontando para o Supabase de producao)",
+    );
+  }
+  return { url, key };
+}
 
-    if (!("content" in data) || typeof data.content !== "string") {
-      return null;
+async function fetchExistingVersions(
+  url: string,
+  key: string,
+): Promise<{ versions: Map<string, string>; total: number }> {
+  const supabase = createClient(url, key, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+
+  const versions = new Map<string, string>();
+  const pageSize = 1000;
+  let from = 0;
+
+  for (;;) {
+    const { data, error } = await supabase
+      .from("packages")
+      .select("package_id, version")
+      .range(from, from + pageSize - 1);
+
+    if (error) throw new Error(`Falha ao ler versoes atuais: ${error.message}`);
+    if (!data || data.length === 0) break;
+
+    for (const row of data) {
+      versions.set(row.package_id as string, (row.version as string) ?? "");
     }
 
-    return Buffer.from(data.content, "base64").toString("utf8");
-  } catch {
-    return null;
-  }
-}
-
-async function parseManifestFromGitHub(
-  octokit: Octokit,
-  manifestPath: string,
-): Promise<ParsedPackage | null> {
-  const mainPath = resolveMainManifestPath(manifestPath);
-  if (!mainPath) return null;
-
-  const content = await fetchFileContent(octokit, mainPath);
-  if (!content) return null;
-
-  const installerPath = mainPath.replace(/\.ya?ml$/i, ".installer.yaml");
-  const installerContent = await fetchFileContent(octokit, installerPath);
-
-  return parseManifestContent(
-    content,
-    installerContent ?? undefined,
-  );
-}
-
-async function getChangedManifestPaths(octokit: Octokit): Promise<string[]> {
-  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-  const paths = new Set<string>();
-
-  console.log(`Fetching commits since ${since}...`);
-
-  for await (const response of octokit.paginate.iterator(
-    octokit.repos.listCommits,
-    {
-      owner: WINGET_OWNER,
-      repo: WINGET_REPO,
-      since,
-      per_page: 100,
-    },
-  )) {
-    for (const commit of response.data) {
-      const { data: detail } = await octokit.repos.getCommit({
-        owner: WINGET_OWNER,
-        repo: WINGET_REPO,
-        ref: commit.sha,
-      });
-
-      for (const file of detail.files ?? []) {
-        if (file.status === "removed") continue;
-        if (!file.filename.startsWith(MANIFESTS_PREFIX)) continue;
-        if (!/\.ya?ml$/i.test(file.filename)) continue;
-
-        const mainPath = resolveMainManifestPath(file.filename);
-        if (mainPath) paths.add(mainPath);
-      }
-    }
+    if (data.length < pageSize) break;
+    from += pageSize;
   }
 
-  return Array.from(paths);
+  return { versions, total: versions.size };
 }
 
-async function collectPackagesFromGitHub(
-  octokit: Octokit,
-  manifestPaths: string[],
-): Promise<ParsedPackage[]> {
-  const packages: ParsedPackage[] = [];
-  const seen = new Set<string>();
-
-  for (const path of manifestPaths) {
-    const parsed = await parseManifestFromGitHub(octokit, path);
-    if (!parsed || seen.has(parsed.package_id)) continue;
-
-    seen.add(parsed.package_id);
-    packages.push(parsed);
+async function recalcPopularity(url: string, key: string): Promise<void> {
+  const supabase = createClient(url, key, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+  const { error } = await supabase.rpc("recalc_package_popularity");
+  if (error) {
+    console.warn(`Aviso: recalc_package_popularity falhou: ${error.message}`);
+  } else {
+    console.log("Popularidade recalculada.");
   }
-
-  return packages;
-}
-
-async function collectPackagesFromDirectory(
-  manifestsDir: string,
-): Promise<ParsedPackage[]> {
-  const files = walkManifestFiles(manifestsDir);
-  const maxPackages = getMaxPackages();
-  const packages: ParsedPackage[] = [];
-  const seen = new Set<string>();
-
-  console.log(`Found ${files.length} manifest files in ${manifestsDir}`);
-
-  for (const filePath of files) {
-    if (maxPackages && packages.length >= maxPackages) {
-      console.log(`Reached FULL_SYNC_MAX_PACKAGES limit (${maxPackages})`);
-      break;
-    }
-
-    const parsed = parseManifestFile(filePath);
-    if (!parsed || seen.has(parsed.package_id)) continue;
-
-    seen.add(parsed.package_id);
-    packages.push(parsed);
-  }
-
-  return packages;
 }
 
 async function main(): Promise<void> {
-  const fullSync = isFullSync();
-  const mode = fullSync ? "full" : "incremental";
+  const { url, key } = requireEnv();
+  const limit = getLimit();
 
-  console.log(`EasyWinGet WinGet sync — mode: ${mode}`);
+  console.log(`Supabase alvo: ${new URL(url).host}`);
 
-  let packages: ParsedPackage[] = [];
+  const { versions: existing, total } = await fetchExistingVersions(url, key);
+  console.log(`Pacotes atualmente no banco: ${total}`);
 
-  if (fullSync) {
-    const manifestsDir = process.env.WINGET_PKGS_DIR;
+  const workDir = mkdtempSync(join(tmpdir(), "winstack-sync-"));
 
-    if (!manifestsDir) {
-      throw new Error(
-        "FULL_SYNC requires WINGET_PKGS_DIR pointing to the manifests folder (e.g. winget-pkgs/manifests)",
-      );
+  try {
+    const msixPath = join(workDir, "source.msix");
+    await downloadSourceMsix(msixPath);
+
+    const dbPath = extractIndexDb(msixPath, workDir);
+    const indexEntries = readIndex(dbPath);
+    console.log(`Pacotes na fonte pre-indexada: ${indexEntries.length}`);
+
+    const toFetch = selectEntriesToFetch(indexEntries, existing, limit);
+    console.log(`Novos/atualizados para deep-fetch: ${toFetch.length}`);
+
+    if (toFetch.length === 0) {
+      console.log("Catalogo ja esta atualizado. Nada a fazer.");
+      return;
     }
 
-    packages = await collectPackagesFromDirectory(manifestsDir);
-  } else {
-    const octokit = new Octokit({
-      auth: process.env.GITHUB_TOKEN,
+    const packages = await fetchManifestsConcurrently(toFetch, {
+      concurrency: 12,
+      token: process.env.GITHUB_TOKEN,
     });
+    console.log(`Manifests oficiais lidos: ${packages.length}`);
 
-    const changedPaths = await getChangedManifestPaths(octokit);
-    console.log(`Found ${changedPaths.length} changed manifest paths`);
+    const exportPath = process.env.SYNC_EXPORT_JSON;
+    if (exportPath) {
+      writeFileSync(exportPath, JSON.stringify(packages, null, 2), "utf8");
+      console.log(`Exportado ${packages.length} pacotes para ${exportPath}`);
+      return;
+    }
 
-    packages = await collectPackagesFromGitHub(octokit, changedPaths);
-  }
+    const stats = await upsertPackages(packages);
+    console.log(`Upserted: ${stats.upserted} | Errors: ${stats.errors}`);
 
-  console.log(`Parsed ${packages.length} unique packages`);
+    await recalcPopularity(url, key);
 
-  if (packages.length === 0) {
-    console.log("Nothing to sync.");
-    return;
-  }
-
-  const exportPath = process.env.SYNC_EXPORT_JSON;
-  if (exportPath) {
-    const { writeFileSync } = await import("node:fs");
-    writeFileSync(exportPath, JSON.stringify(packages, null, 2), "utf8");
-    console.log(`Exported ${packages.length} packages to ${exportPath}`);
-    return;
-  }
-
-  const stats = await upsertPackages(packages);
-
-  console.log("Sync complete.");
-  console.log(`Upserted: ${stats.upserted}`);
-  console.log(`Errors: ${stats.errors}`);
-
-  if (stats.errors > 0) {
-    process.exitCode = 1;
+    if (stats.errors > 0) process.exitCode = 1;
+  } finally {
+    rmSync(workDir, { recursive: true, force: true });
   }
 }
 
