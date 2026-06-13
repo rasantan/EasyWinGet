@@ -25,10 +25,13 @@ export type PackageSummary = Pick<
   "id" | "package_id" | "name" | "publisher" | "version" | "categories" | "installer_type"
 >;
 
+export type PackageSort = "relevance" | "name" | "recent";
+
 export type PackageFilters = {
   category?: string;
   publisher?: string;
   installer_type?: string;
+  sort?: PackageSort;
 };
 
 export type SearchPackagesResult = {

@@ -1,5 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 
+import {
+  hydratePackageMetadata,
+  mergeEnrichedPackage,
+  needsEnrichment,
+  persistPackageEnrichment,
+} from "./enrichment";
 import type {
   Package,
   PackageFilters,
@@ -39,9 +45,17 @@ export async function searchPackages(
   const from = (safePage - 1) * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;
 
-  const { data, count, error } = await q
-    .order("name")
-    .range(from, to);
+  const sort = filters.sort ?? "relevance";
+  if (sort === "name") {
+    q = q.order("name", { ascending: true });
+  } else if (sort === "recent") {
+    q = q.order("release_date", { ascending: false, nullsFirst: false });
+  } else {
+    // relevance: proxy por popularidade interna, depois nome
+    q = q.order("popularity", { ascending: false }).order("name", { ascending: true });
+  }
+
+  const { data, count, error } = await q.range(from, to);
 
   if (error) {
     throw new Error(`searchPackages failed: ${error.message}`);
@@ -73,7 +87,20 @@ export async function getPackageByPackageId(
     throw new Error(`getPackageByPackageId failed: ${error.message}`);
   }
 
-  return data as Package | null;
+  if (!data) {
+    return null;
+  }
+
+  const pkg = data as Package;
+
+  if (!needsEnrichment(pkg)) {
+    return pkg;
+  }
+
+  const enrichment = await hydratePackageMetadata(pkg);
+  void persistPackageEnrichment(pkg.id, enrichment);
+
+  return mergeEnrichedPackage(pkg, enrichment);
 }
 
 export async function getCategories(): Promise<string[]> {
@@ -123,7 +150,8 @@ export async function getFeaturedPackages(limit = 6): Promise<Package[]> {
   const { data, error } = await supabase
     .from("packages")
     .select("*")
-    .order("name")
+    .order("popularity", { ascending: false })
+    .order("name", { ascending: true })
     .limit(limit);
 
   if (error) {
