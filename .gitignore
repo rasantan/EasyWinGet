@@ -37,6 +37,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# brainstorm companion (superpowers)
+/.superpowers/
+
 # winget-pkgs clone (sync local / CI)
 /winget-pkgs/
 

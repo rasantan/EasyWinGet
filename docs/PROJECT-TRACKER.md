@@ -151,6 +151,7 @@
 
 - [x] **B.1** Overhaul UX/UI: Substituir página de carrinho por gaveta lateral (sidebar drawer "Meu Kit"), atualizar vocabulário e aplicar tema tecnológico indigo-violeta
 - [x] **B.2** Rebranding e Redesign UX/UI: Rebrand de EasyWinGet para WinStack, TerminalPreview interativo na Home, Assistente de Implantação de 3 passos na geração do script, estilo Glassmorphism e glow de categorias com OKLCH
+- [ ] **B.3** Descoberta de Catálogo & Redesign Editorial — spec aprovada ([`2026-06-13-catalog-discovery-editorial-redesign-design.md`](superpowers/specs/2026-06-13-catalog-discovery-editorial-redesign-design.md)): taxonomia ampla (~22 cats + classificador multi-sinal + backfill), filtros (multi-categoria, recentes, licença), design editorial/oliva (Fraunces, claro+escuro quente, sidebar de filtros), páginas Sobre/Privacidade/Termos/FAQ e reescrita de copy/i18n. Aguardando plano de implementação.
 - [ ] _(exemplo: adicionar favicon e OG images)_
 
 ---

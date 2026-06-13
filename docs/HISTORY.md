@@ -580,3 +580,22 @@
 **Próximo:**
 - Conferir a UI da loja com o catálogo cheio (ordenação, filtros, ícones) e ajustar a taxonomia de categorias se quiser cobertura maior.
 
+---
+
+## 2026-06-13 — Brainstorming: Descoberta de Catálogo & Redesign Editorial
+
+**Feito:**
+- Sessão de brainstorming (com companion visual) sobre 3 frentes: expansão de taxonomia, mais filtros e redesign de UX/UI "sem cara de IA".
+- Spec aprovada e escrita: [`docs/superpowers/specs/2026-06-13-catalog-discovery-editorial-redesign-design.md`](superpowers/specs/2026-06-13-catalog-discovery-editorial-redesign-design.md).
+
+**Decisões:**
+- Iniciativa coesa em 5 fases (dados → filtros → design system → componentes/páginas → conteúdo/polish).
+- Taxonomia: mapa plano ~22 categorias + classificador multi-sinal (tags/nome/descrição/publisher), meta ~80% de cobertura, backfill dos 13k.
+- Filtros novos: multi-categoria (`overlaps`), atualizados recentemente (`release_date`), licença agrupada (`license_group`: open-source/proprietary/unknown).
+- Direção visual: **editorial/quente**, acento **oliva/floresta**, claro + **escuro quente** (carvão), títulos em **Fraunces**, layout de loja com **sidebar de filtros fixa**.
+- Remover sinais de "IA": glassmorphism, glow, gradiente no texto, ping, neon por categoria.
+- Voz calorosa/editorial em 1ª pessoa, enquadramento indie/open-source; novas páginas Sobre/Privacidade/Termos/FAQ; reescrita de copy + i18n PT/EN (sem inglês solto).
+
+**Próximo:**
+- Revisão da spec pelo usuário e, em seguida, escrever o plano de implementação (writing-plans).
+
