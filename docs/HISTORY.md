@@ -548,3 +548,23 @@
 **Próximo:**
 - Aplicar migrations `005` e `006` no Supabase de produção e rodar o sync (primeiro com `--limit` para validar, depois full). Requer envs de produção carregadas.
 
+---
+
+## 2026-06-13 — Fase 9: migrations aplicadas, correções de schema e primeiro sync real
+
+**Feito:**
+- Migrations `005` e `006` aplicadas no Supabase de produção (projeto `yqhjscguprljiiajwncw`) via MCP.
+- Corrigidos dois bugs descobertos ao rodar contra a fonte real:
+  - Extração: o `source2.msix` real usa *data descriptors* no zip, que o `adm-zip` rejeita (`Descriptor data is malformed`). Trocado por `fflate` (pura-JS, lê o *central directory*); `adm-zip` removido das deps.
+  - Schema: o `index.db` real usa o schema **v2** (tabela única `packages` com `id`/`latest_version`), não o `manifest`/`ids`/`versions`. `read-index` reescrito para v2 com fallback ao schema legado.
+- Sync de validação com `--limit 300`: 13.253 pacotes na fonte pré-indexada, 300 deep-fetched, 300 upserted, 0 erros, popularidade recalculada.
+- Validação no banco: 319 pacotes totais; metadados oficiais preenchidos (license, homepage, description_full, tags) — ex.: `0-don.clippy` (MIT, GitHub homepage, 4 tags).
+
+**Decisões:**
+- `fflate` em vez de `adm-zip` por robustez com MSIX e por ser pura-JS (funciona no CI sem toolchain nativo).
+- `read-index` mantém suporte ao schema legado por segurança, mas prioriza o v2.
+
+**Próximo:**
+- Rodar o sync completo (`npm run start`, sem `--limit`) para popular os ~13k pacotes restantes.
+- Conferir a UI da loja com o catálogo cheio (ordenação, filtros via RPC, ícones).
+
